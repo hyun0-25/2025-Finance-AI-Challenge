@@ -1,10 +1,9 @@
-package com.project.backend.users.dto;
+package com.project.backend.users.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)
-    private UUID id;
+    private UUID userId;
 
     @Column(nullable = false)
     private String userName;
