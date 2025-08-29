@@ -5,5 +5,5 @@ public enum ScheduleFrequencyType {
     DAILY,
     WEEKLY,
     MONTHLY,
-    YEARLYS
+    YEARLY
 }
