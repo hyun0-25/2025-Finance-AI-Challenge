@@ -62,4 +62,8 @@ public class Schedule extends BaseEntity {
     public static Schedule createSchedule(User user, LocalDateTime scheduleStartDate, LocalDateTime scheduleEndDate, ScheduleFrequencyType scheduleFrequency, LocalDateTime scheduleRepeatStartDate, LocalDateTime scheduleRepeatEndDate, String scheduleName, String scheduleColor, Boolean scheduleIsChecklist) {
         return new Schedule(user, scheduleStartDate, scheduleEndDate, scheduleFrequency, scheduleRepeatStartDate, scheduleRepeatEndDate, scheduleName, scheduleColor, scheduleIsChecklist);
     }
+
+    public void updateSetting(boolean enable){
+        this.scheduleIsChecklist = enable;
+    }
 }
