@@ -34,4 +34,13 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleResponseDto);
     }
 
+    @PutMapping("/{scheduleId}")
+    public ResponseEntity<ScheduleResponseDto> deleteSchedule(@PathVariable Long scheduleId){
+        log.info("{ ScheduleController } : Schedule 삭제 진입");
+        log.info(" >> ScheduleId : " + scheduleId);
+        scheduleService.deleteSchedule(scheduleId);
+        log.info("{ ScheduleController } : Schedule 삭제 성공");
+        return ResponseEntity.ok().build();
+    }
+
 }
