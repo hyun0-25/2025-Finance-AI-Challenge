@@ -1,6 +1,7 @@
 package com.project.backend.users.domain;
 
 import com.project.backend.cards.domain.Benefit;
+import com.project.backend.global.BaseEntity;
 import com.project.backend.schedules.domain.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="user")
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)

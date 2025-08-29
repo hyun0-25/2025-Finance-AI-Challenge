@@ -1,6 +1,7 @@
 package com.project.backend.schedules.domain;
 
 import com.project.backend.cards.domain.Card;
+import com.project.backend.global.BaseEntity;
 import com.project.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "schedule")
-public class Schedule {
+public class Schedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
