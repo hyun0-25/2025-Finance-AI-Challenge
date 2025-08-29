@@ -1,5 +1,7 @@
 package com.project.backend.global;
 
+import com.project.backend.global.exception.BaseException;
+import com.project.backend.global.exception.GlobalErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -22,5 +24,11 @@ public class BaseEntity {
     private LocalDateTime modifiedAt;
 
     private Boolean isDeleted = false;
+
+    public void softDelete() {
+        if (this.isDeleted)
+            throw BaseException.type(GlobalErrorCode.OBJECT_ALREADY_DELETED);
+        this.isDeleted = true;
+    }
 
 }

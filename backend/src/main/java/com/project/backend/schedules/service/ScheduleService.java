@@ -60,4 +60,16 @@ public class ScheduleService {
         return ScheduleResponseDto.fromSchedule(schedule);
     }
 
+    public void deleteSchedule(Long scheduleId) {
+        log.info("{ ScheduleService } : schedule 삭제");
+        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        Schedule schedule = scheduleRepository.findScheduleByScheduleIdAndIsDeleted(scheduleId);
+        if (schedule == null)
+            throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+        if (!schedule.getUser().getUserId().equals(user.getUserId()))
+            throw BaseException.type(ScheduleErrorCode.USER_IS_NOT_SCHEDULE_WRITER);
+        schedule.softDelete();
+        log.info("{ ScheduleService } : schedule 삭제 성공");
+    }
+
 }
