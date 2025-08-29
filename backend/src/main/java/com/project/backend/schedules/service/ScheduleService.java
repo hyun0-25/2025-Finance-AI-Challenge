@@ -2,14 +2,12 @@ package com.project.backend.schedules.service;
 
 import com.project.backend.global.exception.BaseException;
 import com.project.backend.schedules.domain.Schedule;
+import com.project.backend.schedules.dto.request.ScheduleSettingRequestDto;
 import com.project.backend.schedules.dto.request.ScheduleRequestDto;
 import com.project.backend.schedules.dto.response.ScheduleResponseDto;
 import com.project.backend.schedules.exception.ScheduleErrorCode;
 import com.project.backend.schedules.repository.ScheduleRepository;
 import com.project.backend.users.domain.User;
-import com.project.backend.users.dto.request.UserRequestDto;
-import com.project.backend.users.dto.response.UserResponseDto;
-import com.project.backend.users.exception.UserErrorCode;
 import com.project.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +68,18 @@ public class ScheduleService {
             throw BaseException.type(ScheduleErrorCode.USER_IS_NOT_SCHEDULE_WRITER);
         schedule.softDelete();
         log.info("{ ScheduleService } : schedule 삭제 성공");
+    }
+
+    public void updateScheduleSetting(Long scheduleId, ScheduleSettingRequestDto scheduleSettingRequestDto) {
+        log.info("{ ScheduleService } : schedule ON/OFF 세팅변경");
+        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        Schedule schedule = scheduleRepository.findScheduleByScheduleIdAndIsDeleted(scheduleId);
+        if (schedule == null)
+            throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+        if (!schedule.getUser().getUserId().equals(user.getUserId()))
+            throw BaseException.type(ScheduleErrorCode.USER_IS_NOT_SCHEDULE_WRITER);
+        schedule.updateSetting(scheduleSettingRequestDto.enable());
+        log.info("{ ScheduleService } : schedule ON/OFF 세팅변경 성공");
     }
 
 }

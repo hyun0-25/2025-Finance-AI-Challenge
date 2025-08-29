@@ -1,5 +1,6 @@
 package com.project.backend.schedules.controller;
 
+import com.project.backend.schedules.dto.request.ScheduleSettingRequestDto;
 import com.project.backend.schedules.dto.request.ScheduleRequestDto;
 import com.project.backend.schedules.dto.response.ScheduleResponseDto;
 import com.project.backend.schedules.service.ScheduleService;
@@ -40,6 +41,18 @@ public class ScheduleController {
         log.info(" >> ScheduleId : " + scheduleId);
         scheduleService.deleteSchedule(scheduleId);
         log.info("{ ScheduleController } : Schedule 삭제 성공");
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{scheduleId}/on-off")
+    public ResponseEntity<ScheduleResponseDto> updateScheduleSetting(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleSettingRequestDto scheduleSettingRequestDto
+    ){
+        log.info("{ ScheduleController } : Schedule ON/OFF 세팅변경 진입");
+        log.info(" >> ScheduleId : " + scheduleId);
+        scheduleService.updateScheduleSetting(scheduleId, scheduleSettingRequestDto);
+        log.info("{ ScheduleController } : Schedule ON/OFF 세팅변경 성공");
         return ResponseEntity.ok().build();
     }
 
