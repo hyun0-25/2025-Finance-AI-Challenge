@@ -23,9 +23,11 @@ public class Benefit extends BaseEntity {
     @Column(nullable = false)
     private BenefitCategory benefitCategory;
 
-    private Integer benefitPercent;
+    private String benefitContent;
 
     private Integer benefitAmountLimit;
+
+    private Double benefitPercent;
 
     private Integer benefitAmount;
 
@@ -41,11 +43,12 @@ public class Benefit extends BaseEntity {
 
     private Integer benefitMaxAmount;
 
-    private Benefit(Card card, BenefitCategory benefitCategory, Integer benefitPercent, Integer benefitAmountLimit, Integer benefitAmount, Integer benefitTimes, BenefitType benefitType, BenefitFrequencyType benefitFrequencyType, Integer benefitMinAmount, Integer benefitMaxAmount) {
+    private Benefit(Card card, BenefitCategory benefitCategory, String benefitContent, Integer benefitAmountLimit, Double benefitPercent, Integer benefitAmount, Integer benefitTimes, BenefitType benefitType, BenefitFrequencyType benefitFrequencyType, Integer benefitMinAmount, Integer benefitMaxAmount) {
         this.card = card;
         this.benefitCategory = benefitCategory;
-        this.benefitPercent = benefitPercent;
+        this.benefitContent = benefitContent;
         this.benefitAmountLimit = benefitAmountLimit;
+        this.benefitPercent = benefitPercent;
         this.benefitAmount = benefitAmount;
         this.benefitTimes = benefitTimes;
         this.benefitType = benefitType;
