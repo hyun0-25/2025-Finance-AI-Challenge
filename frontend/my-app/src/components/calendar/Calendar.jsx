@@ -56,7 +56,7 @@ const Calendar = ({ onDateSelect }) => {
     for (let i = 1; i <= nextMonthDays; i++) {
       days.push({
         date: new Date(year, month + 1, i),
-        isCurrentMonth: true
+        isCurrentMonth: false
       });
     }
     
@@ -118,16 +118,22 @@ const Calendar = ({ onDateSelect }) => {
       
       {/* 날짜 그리드 - 6주 × 7일 = 42개 날짜 */}
       <div className="calendar-grid">
-        {calendarDays.map((day, index) => (
-          <div 
-            key={index} 
-            className={`calendar-day ${!day.isCurrentMonth ? 'other-month' : ''}`}
-            onClick={() => handleDateClick(day)}
-          >
-            <span className="day-number">{day.date.getDate()}</span>
-            {/* TODO: 여기에 카드 사용 내역이나 지출 금액을 표시할 수 있습니다 */}
-          </div>
-        ))}
+        {calendarDays.map((day, index) => {
+          const today = new Date();
+          const isToday = day.date.getFullYear() === today.getFullYear() &&
+            day.date.getMonth() === today.getMonth() &&
+            day.date.getDate() === today.getDate();
+          return (
+            <div 
+              key={index}
+              className={`calendar-day${!day.isCurrentMonth ? ' other-month' : ''}${isToday ? ' today' : ''}`}
+              onClick={() => handleDateClick(day)}
+            >
+              <span className="day-number">{day.date.getDate()}</span>
+              {/* TODO: 여기에 카드 사용 내역이나 지출 금액을 표시할 수 있습니다 */}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
