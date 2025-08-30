@@ -29,4 +29,12 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userCardResponseDto);
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserCardResponseDto>> getUserCards() {
+        log.info("{ CardController } : UserCardList 조회 진입");
+        List<UserCardResponseDto> userCardResponseDtoList = userCardService.getUserCards();
+        log.info("{ CardController } : UserCardList 조회 성공");
+        return ResponseEntity.ok(userCardResponseDtoList);
+    }
+
 }

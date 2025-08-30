@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -46,9 +48,22 @@ public class UserCardService {
                 userCardRequestDto.userCardSettlementDate()
         );
         userCardRepository.save(userCard);
-        log.info("{ UserCardService } : userCard  성공");
+        log.info("{ UserCardService } : userCard 생성 성공");
         return UserCardResponseDto.fromUserCard(userCard);
     }
+
+    public List<UserCardResponseDto> getUserCards() {
+        log.info("{ UserCardService } : userCardList 조회");
+        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        List<UserCard> userCards = userCardRepository.findByUserIdAndIsDeleted(userId);
+        log.info("{ UserCardService } : userCardList 조회 성공");
+        List<UserCardResponseDto> userCardResponseDtos = new ArrayList<>();
+        for (UserCard uc : userCards) {
+            userCardResponseDtos.add(UserCardResponseDto.fromUserCard(uc));
+        }
+        return userCardResponseDtos;
+    }
+
 
     private void validateAlreadyUserCard(UUID userId, Long cardId) {
         UserCard userCard = userCardRepository.findByUserIdAndCardIdAndIsDeleted(userId, cardId);
