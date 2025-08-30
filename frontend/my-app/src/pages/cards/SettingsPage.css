@@ -150,14 +150,19 @@
 
 .add-card-form .form-actions {
   display: flex;
-  gap: 15px;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
+  gap: 0;
+  width: 100%;
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .add-card-form .cancel-btn,
 .add-card-form .submit-btn {
-  padding: 10px 20px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -179,6 +184,7 @@
 .add-card-form .submit-btn {
   background: #007bff;
   color: white;
+  margin-left: auto;
 }
 
 .add-card-form .submit-btn:hover {

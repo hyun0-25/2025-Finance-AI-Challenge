@@ -67,7 +67,7 @@ const ScheduleForm = ({ selectedDate, onSubmit, onCancel }) => {
       <form onSubmit={handleSubmit}>
         {/* 일정명 입력 필드 (필수) */}
         <div className="form-group">
-          <label htmlFor="title">일정(이름) *</label>
+          <label htmlFor="title">일정명 *</label>
           <input
             type="text"
             id="title"
@@ -124,13 +124,12 @@ const ScheduleForm = ({ selectedDate, onSubmit, onCancel }) => {
         {/* 설명 입력 필드 (선택) */}
         <div className="form-group">
           <label htmlFor="description">설명</label>
-          <textarea
+          <input
             id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             placeholder="일정에 대한 설명을 입력하세요"
-            rows="3"
           />
         </div>
 
