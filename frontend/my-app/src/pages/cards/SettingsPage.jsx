@@ -66,7 +66,7 @@ const SettingsPage = () => {
                                         <button type="submit" className="submit-btn small">추가</button>
                                     </div>
                                     <div className="add-card-fields">
-                                        <div className="card-number-group">
+                                        <div className="card-number-group"> 
                                             {[0,1,2,3].map(i => (
                                                 <input
                                                     key={i}
