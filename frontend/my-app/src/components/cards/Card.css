@@ -1,0 +1,271 @@
+/* Card 컴포넌트 스타일 - 3D 뒤집기 애니메이션 */
+
+.card {
+  width: 100%;
+  height: 200px;
+  perspective: 1000px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  overflow: hidden; /* 카드 범위 제어 */
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden; /* 내용이 카드 범위를 벗어나지 않도록 */
+}
+
+.card-front {
+  /* 배경색 제거 - 이미지로 대체 예정 */
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e9ecef;
+}
+
+.card-back {
+  background: white;
+  color: #333;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 앞면 스타일 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-bank {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%; /* 긴 카드명이 넘치지 않도록 */
+  word-wrap: break-word;
+  color: #333;
+}
+
+.card-hint {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 12px;
+  color: #666;
+}
+
+.card-hint p {
+  margin: 0;
+}
+
+/* 카드 뒷면 스타일 */
+.card-back-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.card-back-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  max-width: 60%; /* 긴 카드명이 넘치지 않도록 */
+  word-wrap: break-word;
+}
+
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.delete-btn:hover {
+  background: #ff5252;
+}
+
+.card-benefits {
+  flex: 1;
+  overflow: hidden; /* 혜택 목록이 넘치지 않도록 */
+}
+
+.card-benefits h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.benefits-list {
+  max-height: 80px; /* 혜택 목록 높이 제한 */
+  overflow-y: auto; /* 스크롤 가능하도록 */
+}
+
+.benefits-list ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.benefits-list li {
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.no-benefits {
+  margin: 0;
+  color: #999;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.card-info {
+  margin-top: auto;
+  font-size: 14px;
+  color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.card-info p {
+  margin: 5px 0;
+  line-height: 1.3;
+}
+
+/* 스크롤바 스타일링 */
+.benefits-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.benefits-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.benefits-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.benefits-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 태블릿 최적화 */
+@media (max-width: 768px) {
+  .card {
+    height: 180px;
+  }
+  
+  .card-front,
+  .card-back {
+    padding: 15px;
+  }
+  
+  .card-name {
+    font-size: 14px;
+  }
+  
+  .card-back-header h3 {
+    font-size: 16px;
+  }
+  
+  .delete-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .card-benefits h4 {
+    font-size: 15px;
+  }
+  
+  .benefits-list {
+    max-height: 70px;
+  }
+  
+  .benefits-list ul {
+    font-size: 13px;
+  }
+  
+  .card-info {
+    font-size: 13px;
+  }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 480px) {
+  .card {
+    height: 160px;
+    margin-bottom: 15px;
+  }
+  
+  .card-front,
+  .card-back {
+    padding: 12px;
+  }
+  
+  .card-name {
+    font-size: 13px;
+  }
+  
+  .card-back-header h3 {
+    font-size: 15px;
+  }
+  
+  .delete-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .card-benefits h4 {
+    font-size: 14px;
+  }
+  
+  .benefits-list {
+    max-height: 60px;
+  }
+  
+  .benefits-list ul {
+    font-size: 12px;
+  }
+  
+  .card-info {
+    font-size: 12px;
+  }
+}

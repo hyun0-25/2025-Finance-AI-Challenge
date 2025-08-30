@@ -1,0 +1,301 @@
+.add-card-form {
+  position: relative;
+  width: 320px;
+  height: 200px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-card-form-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.add-card-actions {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+.add-card-actions .small {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.add-card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+.card-number-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.card-number-input {
+  width: 48px;
+  text-align: center;
+  font-size: 18px;
+  padding: 8px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+.card-extra-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.card-extra-input {
+  width: 70px;
+  text-align: center;
+  font-size: 15px;
+  padding: 8px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+/* SettingsPage 컴포넌트 스타일 */
+
+.settings-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding-bottom: 32px; /* 하단 네비게이션 높이만큼 여백 */
+}
+
+.page-content {
+  padding: 8px;
+}
+
+.card-management-section {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.card-management-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 카드 추가 폼 스타일 */
+.add-card-form {
+  background: #f8f9fa;
+  border: 1px dashed #007bff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.add-card-form h4 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: #007bff;
+  text-align: center;
+}
+
+.add-card-form .form-group {
+  margin-bottom: 15px;
+}
+
+.add-card-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.add-card-form input,
+.add-card-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.add-card-form input:focus,
+.add-card-form textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.add-card-form input::placeholder,
+.add-card-form textarea::placeholder {
+  color: #999;
+  font-size: 13px;
+}
+
+.add-card-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.add-card-form .form-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.add-card-form .cancel-btn,
+.add-card-form .submit-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+}
+
+.add-card-form .cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.add-card-form .cancel-btn:hover {
+  background: #5a6268;
+}
+
+.add-card-form .submit-btn {
+  background: #007bff;
+  color: white;
+}
+
+.add-card-form .submit-btn:hover {
+  background: #0056b3;
+}
+
+/* 태블릿 최적화 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 15px;
+  }
+  
+  .card-management-section {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .card-management-section h3 {
+    font-size: 18px;
+  }
+  
+  .add-card-form {
+    padding: 15px;
+  }
+  
+  .add-card-form h4 {
+    font-size: 16px;
+  }
+  
+  .add-card-form .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .add-card-form label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .add-card-form input,
+  .add-card-form textarea {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .add-card-form .form-actions {
+    gap: 12px;
+    margin-top: 18px;
+  }
+  
+  .add-card-form .cancel-btn,
+  .add-card-form .submit-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 480px) {
+  .page-content {
+    padding: 10px;
+  }
+  
+  .card-management-section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .card-management-section h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .cards-container {
+    gap: 15px;
+  }
+  
+  .add-card-form {
+    padding: 12px;
+  }
+  
+  .add-card-form h4 {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .add-card-form .form-group {
+    margin-bottom: 10px;
+  }
+  
+  .add-card-form label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  
+  .add-card-form input,
+  .add-card-form textarea {
+    padding: 6px;
+    font-size: 12px;
+  }
+  
+  .add-card-form .form-actions {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+  
+  .add-card-form .cancel-btn,
+  .add-card-form .submit-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+    min-width: auto;
+  }
+}

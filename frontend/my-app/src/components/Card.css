@@ -1,0 +1,170 @@
+.card {
+  width: 100%;
+  height: 200px;
+  perspective: 1000px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-back {
+  background: white;
+  color: #333;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 앞면 스타일 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.card-bank {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.card-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.chip-icon {
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.arrow {
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+/* 카드 뒷면 스타일 */
+.card-back-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.card-back-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background: #ff5252;
+}
+
+.card-benefits h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-benefits ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.card-benefits li {
+  margin-bottom: 5px;
+}
+
+.card-info {
+  margin-top: auto;
+  font-size: 14px;
+  color: #666;
+}
+
+.card-info p {
+  margin: 5px 0;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 480px) {
+  .card {
+    height: 180px;
+  }
+  
+  .card-front,
+  .card-back {
+    padding: 15px;
+  }
+  
+  .card-name {
+    font-size: 14px;
+  }
+  
+  .card-back-header h3 {
+    font-size: 16px;
+  }
+  
+  .delete-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}

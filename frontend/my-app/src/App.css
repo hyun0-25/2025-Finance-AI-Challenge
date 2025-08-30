@@ -1,0 +1,54 @@
+/* App 컴포넌트 스타일 */
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background: #ffffff;
+  position: relative;
+}
+
+.App-main {
+  padding-bottom: 32px; /* 하단 네비게이션 높이만큼 여백 */
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .App-main {
+    padding-bottom: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .App-main {
+    padding-bottom: 65px;
+  }
+}
+
+/* 데스크톱 최적화 */
+@media (min-width: 769px) {
+  .App-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 8px 32px 8px;
+  }
+}
+
+.page-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.page-content h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.page-content p {
+  color: #666;
+  font-size: 1.1rem;
+}
