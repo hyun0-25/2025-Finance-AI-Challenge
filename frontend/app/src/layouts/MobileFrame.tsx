@@ -51,7 +51,7 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 8px", // 좌우 여백을 줄임
-          zIndex: 3,
+          zIndex: 999,
           pointerEvents: "none",
         }}
       >
@@ -66,7 +66,6 @@ export default function MobileFrame({ children }: MobileFrameProps) {
             background: "#000",
             borderRadius: 24,
             boxShadow: "0 0 0 2px rgba(0,0,0,0.6)",
-            zIndex: 2,
           }}
         >
           {/* 카메라 점 */}
@@ -114,20 +113,22 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           overflow: "hidden",
         }}
       >
-        {children}
-        {/* 홈 인디케이터 */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 16,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 120,
-            height: 6,
-            borderRadius: 3,
-            background: "rgba(0,0,0,0.2)",
-          }}
-        />
+        <div style={{ height: "100%", overflowY: "auto" }}>
+          {children}
+          {/* 홈 인디케이터 */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 16,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 120,
+              height: 6,
+              borderRadius: 3,
+              background: "rgba(0,0,0,0.2)",
+            }}
+          />
+        </div>
       </div>
     </div>
   );

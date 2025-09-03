@@ -11,7 +11,7 @@ export default function ReportsPage() {
     characterImg: "/character-img.png",
   };
 
-    const reportData2 = [
+  const reportData2 = [
     { icon: "💍", label: "소중한 사람을 위한", highlight: "결혼식 참석 2회" },
     { icon: "💕", label: "설렘 가득했던", highlight: "데이트 8회" },
     { icon: "👨‍👩‍👧‍👦", label: "가족과 함께한", highlight: "국내여행 1회" },
@@ -22,7 +22,6 @@ export default function ReportsPage() {
     <div style={{ paddingTop: "54px", textAlign: "center" }}>
       <ReportContent1 {...reportData1} />
       <ReportContent2 activities={reportData2} />
-      {/* ReportContent3도 같은 방식으로 추가 */}
     </div>
   );
 }
