@@ -63,7 +63,7 @@ export default function ReportContent1({
         }}
       />
       {/* 문구 */}
-      <div style={{ fontWeight: 500, fontSize: 20, color: "#222" }}>
+      <div style={{ fontWeight: 500, fontSize: 20, color: "#222", marginBottom: 24 }}>
         지난 3개월, {userName}의 시간은 이렇게 채워졌어요.
       </div>
     </div>
