@@ -9,5 +9,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     @Query("SELECT c FROM Card c WHERE c.cardId = :id AND c.isDeleted = false")
-    Card findByIdAnAndIsDeleted(@Param("id") Long id);
+    Card findByIdAndIsDeleted(@Param("id") Long id);
 }
