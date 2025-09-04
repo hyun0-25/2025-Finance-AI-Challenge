@@ -12,6 +12,7 @@ public record UserCardResponseDto(
         UUID userId,
         Long cardId,
         String userCardNumber,
+        Boolean userCardIsInternational,
         LocalDateTime userCardSettlementDate
 ) {
     public static UserCardResponseDto fromUserCard(UserCard userCard) {
@@ -20,6 +21,7 @@ public record UserCardResponseDto(
                 .userId(userCard.getUser().getUserId())
                 .cardId(userCard.getCard().getCardId())
                 .userCardNumber(userCard.getUserCardNumber())
+                .userCardIsInternational(userCard.getUserCardIsInternational())
                 .userCardSettlementDate(userCard.getUserCardSettlementDate())
                 .build();
     }

@@ -36,7 +36,7 @@ public class UserCardService {
     public UserCardResponseDto createUserCard(UserCardRequestDto userCardRequestDto) {
         log.info("{ UserCardService } : userCard 생성");
         User user = userRepository.findByUUIDAnAndIsDeleted(userId);
-        Card card = cardRepository.findByIdAnAndIsDeleted(userCardRequestDto.cardId());
+        Card card = cardRepository.findByIdAndIsDeleted(userCardRequestDto.cardId());
         if (card == null)
             throw BaseException.type(CardErrorCode.CARD_NOT_FOUND);
         validateAlreadyUserCard(user.getUserId(), card.getCardId());
@@ -45,6 +45,7 @@ public class UserCardService {
                 user,
                 card,
                 userCardRequestDto.userCardNumber(),
+                userCardRequestDto.userCardIsInternational(),
                 userCardRequestDto.userCardSettlementDate()
         );
         userCardRepository.save(userCard);
