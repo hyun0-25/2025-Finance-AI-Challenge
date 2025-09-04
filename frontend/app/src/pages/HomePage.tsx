@@ -24,7 +24,7 @@ export default function HomePage() {
 
   return (
     <div
-      style={{
+      style={{ 
         minHeight: '100%',
         backgroundImage: `url(${bgUrl})`,
         backgroundSize: 'cover',
