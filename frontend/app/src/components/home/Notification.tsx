@@ -30,7 +30,7 @@ const Notification: React.FC<NotificationProps> = ({ notifications }) => {
             cursor: 'pointer',
             transition: 'background 0.2s',
           }}
-          onClick={() => navigate('/alarm')}
+          onClick={() => navigate('/alarm', { state: { notifications } })}
           onMouseEnter={() => setHoverIdx(idx)}
           onMouseLeave={() => setHoverIdx(null)}
         >
