@@ -4,3 +4,11 @@
 
 html, body, #root { height: 100%; }
 body { margin: 0; }
+
+body, * {
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE 10+ */
+}
+body::-webkit-scrollbar, *::-webkit-scrollbar {
+  display: none;                 /* Chrome, Safari, Opera */
+}
