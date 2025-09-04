@@ -1,4 +1,6 @@
 import { COLORS } from "../../styles/colors";
+import { useNavigate } from "react-router-dom";
+import React from "react";
 
 interface CardRecommendData {
   cardImg: string;
@@ -14,6 +16,8 @@ interface CardRecommendContent1Props {
 
 export default function CardRecommendContent1({ cards }: CardRecommendContent1Props) {
   const totalRecommend = cards.reduce((sum, card) => sum + card.recommendCount, 0);
+  const navigate = useNavigate();
+  const [hoverIdx, setHoverIdx] = React.useState<number | null>(null);
 
   return (
     <div style={{ textAlign: "left", padding: "0 15px" }}>
@@ -29,12 +33,16 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
           style={{
             width: 380,
             height: 166,
-            background: COLORS.light,
+            background: hoverIdx === idx ? COLORS.accent : COLORS.light,
             borderRadius: 24,
             display: "flex",
             alignItems: "center",
             marginBottom: 20,
+            cursor: "pointer",
           }}
+          onClick={() => navigate(`/card-detail/${encodeURIComponent(card.cardName)}`, { state: { cardImg: card.cardImg, cardName: card.cardName } })}
+          onMouseEnter={() => setHoverIdx(idx)}
+          onMouseLeave={() => setHoverIdx(null)}
         >
           <img
             src={card.cardImg}

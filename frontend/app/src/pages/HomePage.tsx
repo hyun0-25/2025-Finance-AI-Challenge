@@ -12,19 +12,19 @@ const allNotifications: NotificationItem[] = [
 
 export default function HomePage() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([
-    allNotifications[1], // id:2만 먼저 보여줌
+    allNotifications[1], 
   ]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setNotifications([allNotifications[0], allNotifications[1]]);
-    }, 10000); // 10초 후 id:1 추가
+    }, 5000); // 5초 후 id:1 추가
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div
-      style={{
+      style={{ 
         minHeight: '100%',
         backgroundImage: `url(${bgUrl})`,
         backgroundSize: 'cover',
