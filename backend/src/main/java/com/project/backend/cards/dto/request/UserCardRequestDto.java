@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record UserCardRequestDto(
         Long cardId,
         String userCardNumber,
+        Boolean userCardIsInternational,
         LocalDateTime userCardSettlementDate
 ) {
 }
