@@ -30,16 +30,20 @@ public class UserCard extends BaseEntity {
     private String userCardNumber;
 
     @Column(nullable = false)
+    private Boolean userCardIsInternational;
+
+    @Column(nullable = false)
     private LocalDateTime userCardSettlementDate;
 
-    private UserCard(User user, Card card, String userCardNumber, LocalDateTime userCardSettlementDate) {
+    public UserCard(User user, Card card, String userCardNumber, Boolean userCardIsInternational, LocalDateTime userCardSettlementDate) {
         this.user = user;
         this.card = card;
         this.userCardNumber = userCardNumber;
+        this.userCardIsInternational = userCardIsInternational;
         this.userCardSettlementDate = userCardSettlementDate;
     }
 
-    public static UserCard createUserCard(User user, Card card, String userCardNumber, LocalDateTime userCardSettlementDate) {
-        return new UserCard(user, card, userCardNumber, userCardSettlementDate);
+    public static UserCard createUserCard(User user, Card card, String userCardNumber, Boolean userCardIsInternational, LocalDateTime userCardSettlementDate) {
+        return new UserCard(user, card, userCardNumber, userCardIsInternational, userCardSettlementDate);
     }
 }

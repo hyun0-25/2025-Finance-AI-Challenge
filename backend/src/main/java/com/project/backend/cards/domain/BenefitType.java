@@ -6,7 +6,7 @@ public enum BenefitType {
     ON_SITE_DISCOUNT("현장할인"),
     REFUND_DISCOUNT("환급할인"),
     COMMISSION_DISCOUNT("수수료할인"),
-    POINT_ACCUMULATION("포인트적립"),
+    POINT_ACCUMULATION("포인트 적립"),
     MILEAGE_ACCUMULATION("마일리지 적립");
 
     private final String description;
