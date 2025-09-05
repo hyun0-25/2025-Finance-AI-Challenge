@@ -25,8 +25,9 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-application-secret.yml
 
+application-secret.yml
+**/resources/firebase/notification.json
 
 ### NetBeans ###
 /nbproject/private/
