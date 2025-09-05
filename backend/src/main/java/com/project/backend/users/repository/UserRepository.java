@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.userId = :uuid AND u.isDeleted = false")
-    User findByUUIDAnAndIsDeleted(@Param("uuid") UUID uuid);
+    User findByUUIDAndIsDeleted(@Param("uuid") UUID uuid);
 }

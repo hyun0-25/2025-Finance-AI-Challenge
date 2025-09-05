@@ -35,7 +35,7 @@ public class UserCardService {
 
     public UserCardResponseDto createUserCard(UserCardRequestDto userCardRequestDto) {
         log.info("{ UserCardService } : userCard 생성");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         Card card = cardRepository.findByIdAndIsDeleted(userCardRequestDto.cardId());
         if (card == null)
             throw BaseException.type(CardErrorCode.CARD_NOT_FOUND);
@@ -55,7 +55,7 @@ public class UserCardService {
 
     public List<UserCardResponseDto> getUserCards() {
         log.info("{ UserCardService } : userCardList 조회");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         List<UserCard> userCards = userCardRepository.findByUserIdAndIsDeleted(userId);
         log.info("{ UserCardService } : userCardList 조회 성공");
         List<UserCardResponseDto> userCardResponseDtos = new ArrayList<>();
