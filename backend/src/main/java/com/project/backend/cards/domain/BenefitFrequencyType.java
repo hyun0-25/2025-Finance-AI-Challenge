@@ -1,6 +1,7 @@
 package com.project.backend.cards.domain;
 
 public enum BenefitFrequencyType {
+    DAILY("일"),
     WEEKLY("주"),
     MONTHLY("월"),
     YEARLY("년");
