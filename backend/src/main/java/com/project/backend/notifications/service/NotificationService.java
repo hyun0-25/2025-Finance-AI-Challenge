@@ -17,8 +17,13 @@ import com.project.backend.users.domain.User;
 import com.project.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 
@@ -27,6 +32,9 @@ import static java.time.LocalDateTime.now;
 @Transactional
 @RequiredArgsConstructor
 public class NotificationService {
+
+    @Value("${TEST_USER_UUID}")
+    private UUID userId;
 
     private final FirebaseMessaging firebaseMessaging;
     private final UserRepository userRepository;
@@ -71,4 +79,16 @@ public class NotificationService {
 //            throw BaseException.type(NotificationErrorCode.FIREBASE_INVALID_TOKEN);
 //        }
     }
+
+    public List<NotificationResponseDto> getNotifications(){
+        log.info("{ NotificationService } : notification 리스트 조회");
+        List<UserNotification> userNotifications = notificationRepository.findByUserUUIDAndIsDeleted(userId);
+        List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
+        for(UserNotification notification: userNotifications){
+            notificationResponseDtoList.add(NotificationResponseDto.fromNotification(notification));
+        }
+        log.info("{ NotificationService } : notification 리스트 조회 성공");
+        return notificationResponseDtoList;
+    }
+
 }
