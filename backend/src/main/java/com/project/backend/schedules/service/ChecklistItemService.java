@@ -3,7 +3,9 @@ package com.project.backend.schedules.service;
 import com.project.backend.global.exception.BaseException;
 import com.project.backend.schedules.domain.ChecklistItem;
 import com.project.backend.schedules.domain.Schedule;
+import com.project.backend.schedules.dto.request.ChecklistItemIsCheckedRequestDto;
 import com.project.backend.schedules.dto.request.ChecklistItemRequestDto;
+import com.project.backend.schedules.dto.request.ScheduleSettingRequestDto;
 import com.project.backend.schedules.dto.response.ChecklistItemResponseDto;
 import com.project.backend.schedules.exception.ScheduleErrorCode;
 import com.project.backend.schedules.repository.ChecklistItemRepository;
@@ -47,5 +49,14 @@ public class ChecklistItemService {
             throw BaseException.type(ScheduleErrorCode.CHECKLIST_NOT_FOUND);
         checklistItem.softDelete();
         log.info("{ ChecklistItemService } : checklistItem 삭제 성공");
+    }
+
+    public void updateChecklistItemIsChecked(Long scheduleId, Long checklistItemId, ChecklistItemIsCheckedRequestDto checklistItemIsCheckedRequestDto) {
+        log.info("{ ChecklistItemService } : checklistItem isChecked 변경");
+        ChecklistItem checklistItem = checklistItemRepository.findChecklistItemByScheduleIdAndChecklistItemIdAndIsDeleted(scheduleId, checklistItemId);
+        if (checklistItem == null)
+            throw BaseException.type(ScheduleErrorCode.CHECKLIST_NOT_FOUND);
+        checklistItem.updateIsChecked(checklistItemIsCheckedRequestDto.isChecked());
+        log.info("{ ChecklistItemService } : checklistItem isChecked 변경 성공");
     }
 }
