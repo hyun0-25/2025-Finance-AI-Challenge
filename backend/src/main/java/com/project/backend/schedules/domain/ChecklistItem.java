@@ -34,4 +34,8 @@ public class ChecklistItem extends BaseEntity {
     public static ChecklistItem createChecklist(Schedule schedule, String checklistItemName, Boolean checklistItemIsChecked) {
         return new ChecklistItem(schedule, checklistItemName, checklistItemIsChecked);
     }
+
+    public void updateIsChecked(boolean isChecked) {
+        this.checklistItemIsChecked = isChecked;
+    }
 }

@@ -1,6 +1,7 @@
 package com.project.backend.schedules.controller;
 
 import com.project.backend.schedules.domain.ChecklistItem;
+import com.project.backend.schedules.dto.request.ChecklistItemIsCheckedRequestDto;
 import com.project.backend.schedules.dto.request.ChecklistItemRequestDto;
 import com.project.backend.schedules.dto.request.ScheduleSettingRequestDto;
 import com.project.backend.schedules.dto.request.ScheduleRequestDto;
@@ -83,6 +84,20 @@ public class ScheduleController {
         log.info(" >> ChecklistItemId : " + checklistItemId);
         checklistItemService.deleteChecklistItem(scheduleId, checklistItemId);
         log.info("{ ScheduleController } : ChecklistItem 삭제 성공");
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{scheduleId}/checklist/{checklistItemId}/on-off")
+    public ResponseEntity<ChecklistItemResponseDto> updateChecklistItemIsChecked(
+            @PathVariable Long scheduleId,
+            @PathVariable Long checklistItemId,
+            @RequestBody ChecklistItemIsCheckedRequestDto checklistItemIsCheckedRequestDto
+    ) {
+        log.info("{ ScheduleController } : ChecklistItem IsChecked 변경 진입");
+        log.info(" >> ScheduleId : " + scheduleId);
+        log.info(" >> ChecklistItemId : " + checklistItemId);
+        checklistItemService.updateChecklistItemIsChecked(scheduleId, checklistItemId, checklistItemIsCheckedRequestDto);
+        log.info("{ ScheduleController } : ChecklistItem IsChecked 변경 성공");
         return ResponseEntity.ok().build();
     }
 }
