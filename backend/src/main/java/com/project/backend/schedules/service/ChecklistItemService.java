@@ -8,6 +8,7 @@ import com.project.backend.schedules.dto.response.ChecklistItemResponseDto;
 import com.project.backend.schedules.exception.ScheduleErrorCode;
 import com.project.backend.schedules.repository.ChecklistItemRepository;
 import com.project.backend.schedules.repository.ScheduleRepository;
+import com.project.backend.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Check;
@@ -37,5 +38,14 @@ public class ChecklistItemService {
         checklistItemRepository.save(checklistItem);
         log.info("{ ChecklistItemService } : checklistItem 생성 완료");
         return ChecklistItemResponseDto.fromChecklistItem(checklistItem);
+    }
+
+    public void deleteChecklistItem(Long scheduleId, Long checklistItemId) {
+        log.info("{ ChecklistItemService } : checklistItem 삭제");
+        ChecklistItem checklistItem = checklistItemRepository.findChecklistItemByScheduleIdAndChecklistItemIdAndIsDeleted(scheduleId, checklistItemId);
+        if (checklistItem == null)
+            throw BaseException.type(ScheduleErrorCode.CHECKLIST_NOT_FOUND);
+        checklistItem.softDelete();
+        log.info("{ ChecklistItemService } : checklistItem 삭제 성공");
     }
 }
