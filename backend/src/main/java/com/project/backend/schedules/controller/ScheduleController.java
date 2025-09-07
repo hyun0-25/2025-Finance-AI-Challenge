@@ -72,4 +72,17 @@ public class ScheduleController {
         log.info("{ ScheduleController } : ChecklistItem 생성 성공");
         return ResponseEntity.status(HttpStatus.CREATED).body(checklistItemResponseDto);
     }
+
+    @PutMapping("/{scheduleId}/checklist/{checklistItemId}")
+    public ResponseEntity<ChecklistItemResponseDto> deleteChecklistItem(
+            @PathVariable Long scheduleId,
+            @PathVariable Long checklistItemId
+    ) {
+        log.info("{ ScheduleController } : ChecklistItem 삭제 진입");
+        log.info(" >> ScheduleId : " + scheduleId);
+        log.info(" >> ChecklistItemId : " + checklistItemId);
+        checklistItemService.deleteChecklistItem(scheduleId, checklistItemId);
+        log.info("{ ScheduleController } : ChecklistItem 삭제 성공");
+        return ResponseEntity.ok().build();
+    }
 }
