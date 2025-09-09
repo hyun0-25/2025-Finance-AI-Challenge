@@ -2,6 +2,7 @@ package com.project.backend.schedules.domain;
 
 import com.project.backend.cards.domain.Card;
 import com.project.backend.global.BaseEntity;
+import com.project.backend.notifications.domain.UserNotification;
 import com.project.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -23,12 +26,14 @@ public class Schedule extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserNotification> userNotifications = new ArrayList<>();
+
     @Column(nullable = false)
     private LocalDateTime scheduleStartDate;
 
     @Column(nullable = false)
     private LocalDateTime scheduleEndDate;
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -2,6 +2,7 @@ package com.project.backend.users.domain;
 
 import com.project.backend.cards.domain.Benefit;
 import com.project.backend.global.BaseEntity;
+import com.project.backend.notifications.domain.UserNotification;
 import com.project.backend.schedules.domain.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,6 +26,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserNotification> userNotifications = new ArrayList<>();
 
     @Column(nullable = false)
     private String userName;

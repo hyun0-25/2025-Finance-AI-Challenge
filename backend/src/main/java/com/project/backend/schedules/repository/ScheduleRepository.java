@@ -22,4 +22,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "OR (s.scheduleRepeatStartDate <= :end AND s.scheduleRepeatEndDate >= :start)) " +
             "AND s.isDeleted = false")
     List<Schedule> findScheduleByUserIdAndDate(@Param("userId") UUID userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT s FROM Schedule s " +
+            "WHERE s.user.userId = :userId " +
+            "AND ((s.scheduleFrequency = 'NONE' AND FUNCTION('DATE', s.scheduleStartDate) = :start)" +
+            "OR FUNCTION('DATE', s.scheduleRepeatEndDate) >= :start) " +
+            "AND s.isDeleted = false")
+    List<Schedule> findScheduleByUserIdAndStartDate(@Param("userId") UUID userId, @Param("start") LocalDate start);
 }

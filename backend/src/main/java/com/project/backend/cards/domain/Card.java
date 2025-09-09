@@ -30,13 +30,16 @@ public class Card extends BaseEntity {
 
     private Integer cardBenefitLimit;
 
-    private Integer cardAnnualFee;
+    private Integer cardAnnualFeeDomestic;
 
-    private Card(List<Benefit> benefit, String cardName, CardCategory cardCategory, Integer cardBenefitLimit, Integer cardAnnualFee) {
+    private Integer cardAnnualFeeInternational;
+
+    private Card(List<Benefit> benefit, String cardName, CardCategory cardCategory, Integer cardBenefitLimit, Integer cardAnnualFeeDomestic, Integer cardAnnualFeeInternational) {
         this.benefit = benefit;
         this.cardName = cardName;
         this.cardCategory = cardCategory;
         this.cardBenefitLimit = cardBenefitLimit;
-        this.cardAnnualFee = cardAnnualFee;
+        this.cardAnnualFeeDomestic = cardAnnualFeeDomestic;
+        this.cardAnnualFeeInternational = cardAnnualFeeInternational;
     }
 }

@@ -1,7 +1,9 @@
 package com.project.backend.cards.controller;
 
 import com.project.backend.cards.dto.request.UserCardRequestDto;
+import com.project.backend.cards.dto.response.CardResponseDto;
 import com.project.backend.cards.dto.response.UserCardResponseDto;
+import com.project.backend.cards.service.CardService;
 import com.project.backend.cards.service.UserCardService;
 import com.project.backend.schedules.dto.request.ScheduleRequestDto;
 import com.project.backend.schedules.dto.response.ScheduleResponseDto;
@@ -18,7 +20,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/cards")
 public class CardController {
+    private final CardService cardService;
     private final UserCardService userCardService;
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<CardResponseDto> getCard(@PathVariable Long cardId) {
+        log.info("{ CardController } : Card 조회 진입");
+        CardResponseDto cardResponseDto = cardService.getCard(cardId);
+        log.info("{ CardController } : Card 조회 성공");
+        return ResponseEntity.ok(cardResponseDto);
+    }
 
     @PostMapping
     public ResponseEntity<UserCardResponseDto> createUserCard(@RequestBody UserCardRequestDto userCardRequestDto) {

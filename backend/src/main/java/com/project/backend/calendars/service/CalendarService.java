@@ -41,7 +41,7 @@ public class CalendarService {
         LocalDate monthStart = LocalDate.of(year, month, 1);
         LocalDateTime start = monthStart.atStartOfDay();
         LocalDateTime end = monthStart.withDayOfMonth(monthStart.lengthOfMonth()).atTime(23, 59, 59);
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
 
         List<Schedule> schedules = scheduleRepository.findScheduleByUserIdAndDate(user.getUserId(), start, end);
         List<ScheduleListResponseDto> scheduleListResponseDtos = new ArrayList<>();

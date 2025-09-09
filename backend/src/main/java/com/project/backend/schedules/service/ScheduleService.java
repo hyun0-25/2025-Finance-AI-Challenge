@@ -30,7 +30,7 @@ public class ScheduleService {
 
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         log.info("{ ScheduleService } : schedule 생성");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         Schedule schedule = Schedule.createSchedule(
                 user,
                 scheduleRequestDto.scheduleStartDate(),
@@ -48,7 +48,7 @@ public class ScheduleService {
 
     public ScheduleResponseDto getSchedule(Long scheduleId) {
         log.info("{ ScheduleService } : schedule 조회");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         Schedule schedule = scheduleRepository.findScheduleByScheduleIdAndIsDeleted(scheduleId);
         if (schedule == null)
             throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
@@ -60,7 +60,7 @@ public class ScheduleService {
 
     public void deleteSchedule(Long scheduleId) {
         log.info("{ ScheduleService } : schedule 삭제");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         Schedule schedule = scheduleRepository.findScheduleByScheduleIdAndIsDeleted(scheduleId);
         if (schedule == null)
             throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
@@ -72,7 +72,7 @@ public class ScheduleService {
 
     public void updateScheduleSetting(Long scheduleId, ScheduleSettingRequestDto scheduleSettingRequestDto) {
         log.info("{ ScheduleService } : schedule ON/OFF 세팅변경");
-        User user = userRepository.findByUUIDAnAndIsDeleted(userId);
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
         Schedule schedule = scheduleRepository.findScheduleByScheduleIdAndIsDeleted(scheduleId);
         if (schedule == null)
             throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
