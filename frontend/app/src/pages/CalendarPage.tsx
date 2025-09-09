@@ -22,7 +22,7 @@ const CalendarPage: React.FC = () => {
   useEffect(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    axios.get(`${API_BASE_URL}/calendars`, { params: { year, month } })
+    axios.get(`${API_BASE_URL}/calendars`, { params: { year, month } }) 
       .then(res => setSchedules(res.data.scheduleListResponseDtoList || []));
   }, [currentDate]);
 

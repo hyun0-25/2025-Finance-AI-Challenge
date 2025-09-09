@@ -6,8 +6,8 @@ interface MobileFrameProps {
 
 const FRAME_WIDTH = 434;
 const FRAME_HEIGHT = 898;
-const FRAME_RADIUS = 44;
-const FRAME_BORDER = 7;
+const FRAME_RADIUS = 45;
+const FRAME_BORDER = 5;
 const SCREEN_WIDTH = FRAME_WIDTH - FRAME_BORDER * 2;
 const SCREEN_HEIGHT = FRAME_HEIGHT - FRAME_BORDER * 2;
 const SCREEN_RADIUS = 38;
@@ -119,13 +119,13 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           <div
             style={{
               position: "absolute",
-              bottom: 16,
+              bottom: 10,
               left: "50%",
               transform: "translateX(-50%)",
-              width: 120,
+              width: 150,
               height: 6,
               borderRadius: 3,
-              background: "rgba(0,0,0,0.2)",
+              background: "rgba(0,0,0,1)",
             }}
           />
         </div>
