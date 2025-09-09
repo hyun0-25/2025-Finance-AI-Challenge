@@ -5,6 +5,8 @@ import ReportsPage from "./pages/ReportsPage";
 import CardRecommendPage from "./pages/CardRecommendPage";
 import CardDetailPage from "./pages/CardDetailPage";
 import AlarmPage from "./pages/AlarmPage";
+import CalendarPage from "./pages/CalendarPage";
+import ScheduleRegisterPage from "./pages/ScheduleRegisterPage";
 
 function App() {
   return (
@@ -16,7 +18,8 @@ function App() {
           <Route path="/card-recommend" element={<CardRecommendPage />} />
           <Route path="/card-detail/:cardName" element={<CardDetailPage />} />
           <Route path="/alarm" element={<AlarmPage />} />
-          {/* 다른 페이지도 필요시 추가 */}
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/schedule-register" element={<ScheduleRegisterPage />} />
         </Routes>
       </MobileFrame>
     </BrowserRouter>
