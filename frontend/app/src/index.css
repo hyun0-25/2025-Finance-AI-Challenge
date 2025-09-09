@@ -14,5 +14,5 @@ body::-webkit-scrollbar, *::-webkit-scrollbar {
   display: none;                 /* Chrome, Safari, Opera */
 }
 body {
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Nanum Gothic', '돋움', dotum, sans-serif;
+  font-family: 'Pretendard';
 }
