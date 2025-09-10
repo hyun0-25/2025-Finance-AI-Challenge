@@ -24,7 +24,7 @@ public enum BenefitCategory {
     AIRLINE_MILEAGE("항공마일리지"),
     AIRPORT_LOUNGE_PRIORITY_PASS("공항라운지/PP"),
     PREMIUM("프리미엄"),
-    RAVEL_ACCOMMODATION("여행/숙박"),
+    TRAVEL_ACCOMMODATION("여행/숙박"),
     OVERSEAS("해외"),
     BUSINESS("비즈니스"),
     ETC("이외");
