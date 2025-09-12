@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { type NotificationItem } from '../components/home/Notification';
+import { useState } from 'react';
+import { COLORS } from '../styles/colors';
 
 export default function AlarmPage() {
   const location = useLocation();
@@ -9,6 +11,7 @@ export default function AlarmPage() {
 
   // 최근 도착한 알림 최대 3개
   const recentNotifications = notifications.slice(0, 3);
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   return (
     <div style={{ background: '#fff', maxHeight: '100vh', padding: 0 }}>
@@ -23,8 +26,26 @@ export default function AlarmPage() {
         {recentNotifications.length === 0 ? (
           <div style={{ color: '#aaa', textAlign: 'center', margin: '32px 0' }}>새로운 알림이 없습니다.</div>
         ) : (
-          recentNotifications.map((n) => (
-            <div key={n.id} style={{ background: '#F2F6FF', borderRadius: 12, padding: 16, marginBottom: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+          recentNotifications.map((n, idx) => (
+            <div 
+              key={n.id} 
+              onClick={() => {
+                // 첫 번째 알림(idx === 0)을 클릭하면 /reports 페이지로 이동합니다.
+                if (idx === 0) {
+                  navigate('/reports');
+                }
+              }}
+              onMouseEnter={() => setHoverIdx(idx)}
+              onMouseLeave={() => setHoverIdx(null)}
+              style={{ 
+                background: hoverIdx === idx ? COLORS.accent : COLORS.light,
+                borderRadius: 12, 
+                padding: 16, 
+                marginBottom: 12, 
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                cursor: idx === 0 ? 'pointer' : 'default'
+              }}
+            >
               <div style={{ fontWeight: 600, fontSize: 16 }}>{n.app}</div>
               <div style={{ color: '#222', fontSize: 15, margin: '6px 0' }}>{n.message}</div>
               <div style={{ color: '#888', fontSize: 13 }}>{n.time}</div>

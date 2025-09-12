@@ -2,6 +2,7 @@ import Clock from '../components/home/Clock';
 import Widget from '../components/home/Widget';
 import Notification, { type NotificationItem } from '../components/home/Notification';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const bgUrl = '/bg.jpg';
 
