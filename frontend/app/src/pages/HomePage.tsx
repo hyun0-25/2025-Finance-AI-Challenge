@@ -1,28 +1,10 @@
 import Clock from '../components/home/Clock';
 import Widget from '../components/home/Widget';
-import Notification, { type NotificationItem } from '../components/home/Notification';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Notification from '../components/home/Notification';
 
 const bgUrl = '/bg.jpg';
 
-const allNotifications: NotificationItem[] = [
-  { id: 1, app: 'T끌모아', message: '새 메시지가 도착했습니다.', time: '1분 전' },
-  { id: 2, app: 'T끌모아', message: '새 메시지가 도착했습니다.', time: '10분 전' },
-];
-
 export default function HomePage() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    allNotifications[1], 
-  ]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setNotifications([allNotifications[0], allNotifications[1]]);
-    }, 5000); // 5초 후 id:1 추가
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div
       style={{ 
@@ -39,7 +21,7 @@ export default function HomePage() {
       <div style={{ width: '100%', maxWidth: 400 }}>
         <Clock />
         <Widget />
-        <Notification notifications={notifications} />
+        <Notification />
       </div>
     </div>
   );
