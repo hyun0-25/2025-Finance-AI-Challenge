@@ -7,6 +7,7 @@ import CardDetailPage from "./pages/CardDetailPage";
 import AlarmPage from "./pages/AlarmPage";
 import CalendarPage from "./pages/CalendarPage";
 import ScheduleRegisterPage from "./pages/ScheduleRegisterPage";
+import MyPage from "./pages/MyPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/alarm" element={<AlarmPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/schedule-register" element={<ScheduleRegisterPage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </MobileFrame>
     </BrowserRouter>

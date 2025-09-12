@@ -27,7 +27,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
       <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 20, marginBottom: 12 }}>
         총 {totalRecommend}회의 카드 추천을 받았어요!
       </div>
-      {cards.map((card, idx) => (
+      {cards.map((card, idx) => ( 
         <div
           key={idx}
           style={{
