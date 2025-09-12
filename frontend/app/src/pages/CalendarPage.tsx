@@ -14,16 +14,75 @@ interface Schedule {
   scheduleColor: string;
 }
 
+interface ScheduleDetail {
+  scheduleId: number;
+  userId: string;
+  scheduleStartDate: string;
+  scheduleEndDate: string;
+  scheduleFrequencyType: string;
+  scheduleRepeatStartDate: string | null;
+  scheduleRepeatEndDate: string | null;
+  scheduleName: string;
+  scheduleColor: string;
+  scheduleIsChecklist: boolean;
+  checklistItemResponseDtoList: ChecklistItem[];
+}
+
+interface ChecklistItem {
+  checklistItemId: number;
+  checklistItemName: string;
+  checklistItemIsChecked: boolean;
+}
+
 const CalendarPage: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date()); // 오늘 날짜로 초기화
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [scheduleDetails, setScheduleDetails] = useState<{[key: number]: ScheduleDetail}>({});
+  const [showModal, setShowModal] = useState(false);
+  const [modalSchedule, setModalSchedule] = useState<ScheduleDetail | null>(null);
   const navigate = useNavigate();
+
+  // 일정 상세 정보 가져오기
+  const fetchScheduleDetail = async (scheduleId: number) => {
+    try {
+      console.log(`일정 상세 정보 요청: ${scheduleId}`);
+      const response = await axios.get(`${API_BASE_URL}/schedules/${scheduleId}`);
+      console.log('일정 상세 정보:', response.data);
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: response.data
+      }));
+    } catch (error) {
+      console.error('일정 상세 정보 조회 실패:', error);
+    }
+  };
 
   // 날짜 선택 핸들러
   const handleDateClick = (date: Date) => {
     console.log(`클릭한 날짜: ${format(date, 'yyyy년 M월 d일')}`);
     setSelectedDate(date);
+    
+    // 선택된 날짜의 일정들을 가져와서 상세 정보 요청
+    const dateSchedules = getSchedulesForDate(date);
+    dateSchedules.forEach(schedule => {
+      fetchScheduleDetail(schedule.scheduleId);
+    });
+  };
+
+  // AI 체크리스트 버튼 클릭 핸들러
+  const handleChecklistClick = (scheduleId: number) => {
+    const detail = scheduleDetails[scheduleId];
+    if (detail && detail.scheduleIsChecklist) {
+      setModalSchedule(detail);
+      setShowModal(true);
+    }
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setShowModal(false);
+    setModalSchedule(null);
   };
 
   useEffect(() => {
@@ -242,25 +301,25 @@ const CalendarPage: React.FC = () => {
                   </span>
                 </div>
                 
-                {/* AI 체크리스트 보기 버튼 */}
-                <button
-                  style={{
-                    padding: '6px 12px',
-                    backgroundColor: COLORS.accent,
-                    color: COLORS.white,
-                    border: 'none',
-                    borderRadius: '15px',
-                    fontSize: '11px',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    fontWeight: '500'
-                  }}
-                  onClick={() => {
-                    console.log(`${schedule.scheduleName}의 AI 체크리스트 보기`);
-                  }}
-                >
-                  AI 체크리스트 보기
-                </button>
+                {/* AI 체크리스트 보기 버튼 - 체크리스트가 있는 경우에만 표시 */}
+                {scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist && (
+                  <button
+                    style={{
+                      padding: '6px 12px',
+                      backgroundColor: COLORS.accent,
+                      color: COLORS.white,
+                      border: 'none',
+                      borderRadius: '15px',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      fontWeight: '500'
+                    }}
+                    onClick={() => handleChecklistClick(schedule.scheduleId)}
+                  >
+                    AI 체크리스트 보기
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -301,6 +360,138 @@ const CalendarPage: React.FC = () => {
       >
         +
       </button>
+
+      {/* AI 체크리스트 모달 */}
+      {showModal && modalSchedule && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: -200,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+          onClick={closeModal}
+        >
+          <div 
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '20px',
+              width: '310px',
+              height: '400px',
+              overflow: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px'
+            }}>
+              <div>
+                <h3 style={{ 
+                  fontSize: '18px', 
+                  fontWeight: '600', 
+                  margin: 0,
+                  color: COLORS.black
+                }}>
+                  AI 추천 체크리스트
+                </h3>
+                <p style={{ 
+                  fontSize: '14px', 
+                  color: COLORS.gray, 
+                  margin: '4px 0 0 0'
+                }}>
+                  {modalSchedule.scheduleName} ({modalSchedule.checklistItemResponseDtoList.filter(item => item.checklistItemIsChecked).length}/{modalSchedule.checklistItemResponseDtoList.length})
+                </p>
+              </div>
+              <button
+                onClick={closeModal}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '32px',
+                  cursor: 'pointer',
+                  color: COLORS.gray,
+                  padding: '0',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* 체크리스트 항목들 */}
+            <div style={{ marginBottom: '20px' }}>
+              {modalSchedule.checklistItemResponseDtoList.map((item, index) => (
+                <div 
+                  key={item.checklistItemId}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '12px 0',
+                    borderBottom: index < modalSchedule.checklistItemResponseDtoList.length - 1 ? '1px solid #f0f0f0' : 'none'
+                  }}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: item.checklistItemIsChecked ? COLORS.accent : '#f0f0f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '12px'
+                  }}>
+                    {item.checklistItemIsChecked && (
+                      <span style={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}>✓</span>
+                    )}
+                  </div>
+                  <span style={{ 
+                    fontSize: '14px', 
+                    color: item.checklistItemIsChecked ? COLORS.black : COLORS.gray,
+                  }}>
+                    {item.checklistItemName}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* AI 기능 추천 버튼 */}
+            <button
+              style={{
+                width: '100%',
+                padding: '12px',
+                backgroundColor: COLORS.accent,
+                color: COLORS.white,
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                console.log('AI 기능 추천 실행');
+                // 여기에 AI 기능 추천 로직 추가
+              }}
+            >
+              AI 카드 추천 받기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
