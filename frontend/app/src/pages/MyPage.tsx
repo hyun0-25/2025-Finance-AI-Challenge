@@ -260,16 +260,15 @@ const MyPage: React.FC = () => {
                   }}>
                     {/* 카드 이미지 */}
                     <div style={{
-                      width: '60px',
-                      height: '38px',
-                      borderRadius: '6px',
-                      marginRight: '16px',
-                      overflow: 'hidden',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      marginRight: '12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: COLORS.light
+
                     }}>
                       <img
                         src="/card-img.png"
@@ -277,7 +276,7 @@ const MyPage: React.FC = () => {
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: 'cover'
+                          objectFit: 'contain'
                         }}
                         onError={(e) => {
                           console.log('카드 이미지 로딩 실패');
@@ -289,7 +288,7 @@ const MyPage: React.FC = () => {
                     
                     <div style={{ flex: 1 }}>
                       <h3 style={{
-                        fontSize: '18px',
+                        fontSize: '16px',
                         fontWeight: '600',
                         color: COLORS.black,
                         margin: '0 0 4px 0'
@@ -298,6 +297,8 @@ const MyPage: React.FC = () => {
                           <span style={{ color: COLORS.gray }}>카드 정보 로딩 중...</span>
                         )}
                       </h3>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
                       <p style={{
                         fontSize: '14px',
                         color: COLORS.gray,
@@ -305,16 +306,33 @@ const MyPage: React.FC = () => {
                       }}>
                         {detail?.cardCategory || ''}
                       </p>
+                      {card.userCardIsInternational && (
+                        <span style={{
+                          fontSize: '12px',
+                          backgroundColor: COLORS.accent,
+                          color: COLORS.white,
+                          padding: '4px',
+                          borderRadius: '4px',
+                          fontWeight: '500'
+                        }}>
+                          해외겸용
+                        </span>
+                      )}
+                      </div>
                     </div>
 
-                    {/* 확장 아이콘 */}
+                    {/* 혜택보기 버튼 */}
                     <div style={{
-                      fontSize: '16px',
-                      color: COLORS.gray,
-                      transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.2s ease'
+                      fontSize: '14px',
+                      color: COLORS.accent,
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      border: `1px solid ${COLORS.accent}`,
+                      transition: 'all 0.2s ease'
                     }}>
-                      ▼
+                      {isExpanded ? '접기' : '혜택확인'}
                     </div>
                   </div>
 
@@ -325,10 +343,11 @@ const MyPage: React.FC = () => {
                     alignItems: 'center'
                   }}>
                     <span style={{
-                      fontSize: '16px',
+                      fontSize: '14px',
                       fontWeight: '500',
                       color: COLORS.black,
-                      fontFamily: 'monospace'
+                      fontFamily: 'monospace',
+                      marginLeft: '60px'
                     }}>
                       {maskCardNumber(card.userCardNumber)}
                     </span>
@@ -338,23 +357,11 @@ const MyPage: React.FC = () => {
                       gap: '8px',
                       alignItems: 'center'
                     }}>
-                      {card.userCardIsInternational && (
-                        <span style={{
-                          fontSize: '12px',
-                          backgroundColor: COLORS.accent,
-                          color: COLORS.white,
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          fontWeight: '500'
-                        }}>
-                          해외겸용
-                        </span>
-                      )}
                       <span style={{
                         fontSize: '12px',
                         color: COLORS.gray
                       }}>
-                        만료: {formatDate(card.userCardSettlementDate)}
+                        ~ {formatDate(card.userCardSettlementDate)}
                       </span>
                     </div>
                   </div>
@@ -364,10 +371,12 @@ const MyPage: React.FC = () => {
                 {isExpanded && detail && (
                   <div style={{
                     padding: '0 20px 20px 20px',
-                    borderTop: `1px solid ${COLORS.light}`
+                    borderTop: `1px solid ${COLORS.light}`,
+                    maxHeight: '400px',
+                    overflowY: 'auto'
                   }}>
                     {/* 연회비 정보 */}
-                    <div style={{
+                    {/* <div style={{
                       backgroundColor: COLORS.light,
                       padding: '16px',
                       borderRadius: '12px',
@@ -392,46 +401,41 @@ const MyPage: React.FC = () => {
                           해외겸용: {detail.cardAnnualFeeInternational.toLocaleString()}원
                         </span>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* 혜택 정보 */}
                     <div>
-                      <h4 style={{
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        color: COLORS.black,
-                        margin: '0 0 12px 0'
+                      <div style={{
+                        overflowY: 'auto',
+                        paddingRight: '4px'
                       }}>
-                        카드 혜택 ({detail.benefitListResponseDtoList.length}개)
-                      </h4>
-                      
-                      {detail.benefitListResponseDtoList.map((benefit, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            padding: '12px',
-                            backgroundColor: index % 2 === 0 ? COLORS.white : COLORS.light,
-                            borderRadius: '8px',
-                            marginBottom: '8px'
-                          }}
-                        >
-                          <div style={{
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: COLORS.accent,
-                            marginBottom: '4px'
-                          }}>
-                            {benefit.benefitCategoryAndBenefitInfo}
+                        {detail.benefitListResponseDtoList.map((benefit, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              padding: '12px',
+                              backgroundColor: index % 2 === 0 ? COLORS.white : COLORS.light,
+                              borderRadius: '8px',
+                            }}
+                          >
+                            <div style={{
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: COLORS.accent,
+                              marginBottom: '4px'
+                            }}>
+                              {benefit.benefitCategoryAndBenefitInfo}
+                            </div>
+                            <div style={{
+                              fontSize: '10px',
+                              color: COLORS.gray,
+                              lineHeight: '1.4'
+                            }}>
+                              {benefit.benefitContent}
+                            </div>
                           </div>
-                          <div style={{
-                            fontSize: '13px',
-                            color: COLORS.gray,
-                            lineHeight: '1.4'
-                          }}>
-                            {benefit.benefitContent}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
