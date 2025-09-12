@@ -1,6 +1,7 @@
 package com.project.backend.cards.domain;
 
 import com.project.backend.global.BaseEntity;
+import com.project.backend.transactions.domain.Transaction;
 import com.project.backend.users.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -25,6 +28,9 @@ public class UserCard extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    @OneToMany(mappedBy = "userCard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
     @Column(nullable = false)
     private String userCardNumber;

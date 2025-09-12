@@ -1,9 +1,11 @@
 package com.project.backend.schedules.service;
 
 import com.project.backend.global.exception.BaseException;
+import com.project.backend.schedules.domain.ChecklistItem;
 import com.project.backend.schedules.domain.Schedule;
 import com.project.backend.schedules.dto.request.ScheduleSettingRequestDto;
 import com.project.backend.schedules.dto.request.ScheduleRequestDto;
+import com.project.backend.schedules.dto.response.ChecklistItemResponseDto;
 import com.project.backend.schedules.dto.response.ScheduleResponseDto;
 import com.project.backend.schedules.exception.ScheduleErrorCode;
 import com.project.backend.schedules.repository.ScheduleRepository;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -43,7 +47,7 @@ public class ScheduleService {
                 scheduleRequestDto.scheduleIsChecklist());
         scheduleRepository.save(schedule);
         log.info("{ ScheduleService } : schedule 생성 성공");
-        return ScheduleResponseDto.fromSchedule(schedule);
+        return ScheduleResponseDto.fromSchedule(schedule, new ArrayList<>());
     }
 
     public ScheduleResponseDto getSchedule(Long scheduleId) {
@@ -54,8 +58,16 @@ public class ScheduleService {
             throw BaseException.type(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         if (!schedule.getUser().getUserId().equals(user.getUserId()))
             throw BaseException.type(ScheduleErrorCode.USER_IS_NOT_SCHEDULE_WRITER);
+
+        List<ChecklistItemResponseDto> checklistItemResponseDtos = new ArrayList<>();
+        if (schedule.getScheduleIsChecklist()) {
+            for (ChecklistItem checklistitem : schedule.getChecklistItems()) {
+                if (!checklistitem.getIsDeleted())
+                    checklistItemResponseDtos.add(ChecklistItemResponseDto.fromChecklistItem(checklistitem));
+            }
+        }
         log.info("{ ScheduleService } : schedule 조회 성공");
-        return ScheduleResponseDto.fromSchedule(schedule);
+        return ScheduleResponseDto.fromSchedule(schedule, checklistItemResponseDtos);
     }
 
     public void deleteSchedule(Long scheduleId) {

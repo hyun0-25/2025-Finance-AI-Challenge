@@ -29,6 +29,9 @@ public class Schedule extends BaseEntity {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserNotification> userNotifications = new ArrayList<>();
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChecklistItem> checklistItems = new ArrayList<>();
+
     @Column(nullable = false)
     private LocalDateTime scheduleStartDate;
 
@@ -68,7 +71,7 @@ public class Schedule extends BaseEntity {
         return new Schedule(user, scheduleStartDate, scheduleEndDate, scheduleFrequency, scheduleRepeatStartDate, scheduleRepeatEndDate, scheduleName, scheduleColor, scheduleIsChecklist);
     }
 
-    public void updateSetting(boolean enable){
+    public void updateSetting(boolean enable) {
         this.scheduleIsChecklist = enable;
     }
 }
