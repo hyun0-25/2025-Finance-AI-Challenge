@@ -3,6 +3,8 @@ import axios from 'axios';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
+import NavigationBar from '../layouts/NavigationBar';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -242,7 +244,9 @@ const CalendarPage: React.FC = () => {
 
 
   return (
-    <div className="calendar-page" style={{ position: 'relative', maxHeight: '100vh' }}>
+    <div className="calendar-page" 
+      style={{ position: 'relative', maxHeight: '100vh',
+      display: 'flex', flexDirection: 'column'}}>
       <div>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
@@ -342,14 +346,14 @@ const CalendarPage: React.FC = () => {
         aria-label="일정 등록"
         style={{ 
           position: 'absolute', 
-          right: 20, 
-          bottom: 0, 
-          width: 64, 
-          height: 64, 
+          right: 10, 
+          bottom: -40, 
+          width: 72, 
+          height: 72, 
           borderRadius: '50%', 
-          background: COLORS.main, 
+          background: COLORS.accent, 
           color: COLORS.white, 
-          fontSize: 38, 
+          fontSize: 50, 
           border: 'none', 
           display: 'flex', 
           alignItems: 'center', 
@@ -492,6 +496,15 @@ const CalendarPage: React.FC = () => {
           </div>
         </div>
       )}
+{/* NavigationBar를 항상 하단에 고정 */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: -170, 
+        left: 0, 
+        right: 0 
+      }}>
+        <NavigationBar />
+      </div>
     </div>
   );
 };

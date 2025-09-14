@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
+import NavigationBar from '../layouts/NavigationBar';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -106,7 +107,10 @@ const MyPage: React.FC = () => {
 
   return (
     <div style={{ 
-      maxHeight: '100vh', 
+      height: '100vh',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
       {/* 헤더 */}
       <div style={{
@@ -152,8 +156,13 @@ const MyPage: React.FC = () => {
         </button>
       </div>
 
-      {/* 카드 목록 */}
-      <div style={{ padding: '0 20px' }}>
+      {/* 메인 컨텐츠 영역 */}
+      <div style={{ 
+        padding: '0 20px',
+        flex: 1,
+        overflowY: 'auto',
+        paddingBottom: '90px' // NavigationBar 공간 확보
+      }}>
         <h2 style={{
           fontSize: '20px',
           fontWeight: '600',
@@ -443,6 +452,16 @@ const MyPage: React.FC = () => {
             );
           })
         )}
+      </div>
+      
+      {/* NavigationBar를 항상 하단에 고정 */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: 50, 
+        left: 0, 
+        right: 0 
+      }}>
+        <NavigationBar />
       </div>
     </div>
   );
