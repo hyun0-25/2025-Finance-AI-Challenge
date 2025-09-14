@@ -58,6 +58,10 @@ const Notification: React.FC = () => {
     return () => clearInterval(interval);
   }, [notifications]);
 
+  const handleNotificationClick = () => {
+    navigate('/loading', { state: { notifications } });
+  };
+
   return (
     <div style={{ marginTop: '32px' }}>
       <div style={{ 
@@ -95,7 +99,7 @@ const Notification: React.FC = () => {
               transition: 'background 0.2s',
               animation: 'slideIn 0.3s ease-out'
             }}
-            onClick={() => navigate('/alarm', { state: { notifications } })}
+            onClick={handleNotificationClick}
             onMouseEnter={() => setHoverIdx(idx)}
             onMouseLeave={() => setHoverIdx(null)}
           >
