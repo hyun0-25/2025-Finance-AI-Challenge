@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import ai_checklist_router
+from app.routers import ai_checklist_router, card_recommend_router
 
 app = FastAPI()
 
@@ -10,3 +10,4 @@ def root():
 
 
 app.include_router(ai_checklist_router.router)
+app.include_router(card_recommend_router.router)

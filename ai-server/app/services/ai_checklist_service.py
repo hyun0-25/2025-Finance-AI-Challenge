@@ -1,7 +1,11 @@
 import os, re, json
 from openai import OpenAI
 from dotenv import load_dotenv
-from app.schemas.ai_checklist import ChecklistRequest, ChecklistResponse, ChecklistItem
+from app.schemas.ai_checklist_schema import (
+    ChecklistRequest,
+    ChecklistResponse,
+    ChecklistItem,
+)
 
 load_dotenv()
 
