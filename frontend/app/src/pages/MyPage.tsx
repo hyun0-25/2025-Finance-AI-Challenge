@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
-import NavigationBar from '../layouts/NavigationBar';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -107,7 +106,7 @@ const MyPage: React.FC = () => {
 
   return (
     <div style={{ 
-      height: '100vh',
+      maxHeight: '100vh',
       position: 'relative',
     }}>
       {/* 헤더 */}
@@ -156,8 +155,8 @@ const MyPage: React.FC = () => {
 
       {/* 메인 컨텐츠 영역 */}
       <div style={{ 
+        height: 'calc(100vh - 120px)', // 헤더 및 NavigationBar 높이 제외
         padding: '0 20px',
-        overflowY: 'auto',
       }}>
         <h2 style={{
           fontSize: '20px',
@@ -449,9 +448,6 @@ const MyPage: React.FC = () => {
           })
         )}
       </div>
-      
-      {/* NavigationBar는 이제 fixed로 독립적으로 하단에 고정됨 */}
-      <NavigationBar />
     </div>
   );
 };
