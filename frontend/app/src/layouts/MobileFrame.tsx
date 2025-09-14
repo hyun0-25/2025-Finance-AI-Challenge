@@ -95,10 +95,10 @@ export default function MobileFrame({ children }: MobileFrameProps) {
       >
         {/* 현재 시간 (클릭시 "/"경로로 이동*/}
         <span style={{ 
-          fontSize: 22, 
+          fontSize: 20, 
           fontWeight: 500, 
           color: "#222", 
-          marginLeft: 40, 
+          marginLeft: 50, 
           pointerEvents: "auto", 
         }} onClick={() => { navigate("/") }}>{time}</span>
         {/* 펀치홀 */}
@@ -107,6 +107,7 @@ export default function MobileFrame({ children }: MobileFrameProps) {
             position: "relative",
             width: 126,
             height: 37,
+            marginLeft: 24,
             background: "#000",
             borderRadius: 24,
             boxShadow: "0 0 0 2px rgba(0,0,0,0.6)",
@@ -138,10 +139,10 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           </div>
         </div>
         {/* 네트워크/배터리 아이콘 */}
-        <div style={{ display: "flex", alignItems: "center", marginRight: 40, gap: 10 }}>
-          <img src="/icons/icon-signal.png" alt="신호" style={{ width: 20, height: 20 }} />
-          <img src="/icons/icon-wifi.png" alt="와이파이" style={{ width: 20, height: 20 }} />
-          <img src="/icons/icon-battery.png" alt="배터리" style={{ width: 20, height: 20 }} />
+        <div style={{ display: "flex", alignItems: "center", marginRight: 40, gap: 8 }}>
+          <img src="/icons/icon-signal1.png" alt="신호" style={{ width: 22, height: 22 }} />
+          <img src="/icons/icon-wifi1.png" alt="와이파이" style={{ width: 22, height: 22 }} />
+          <img src="/icons/icon-battery1.png" alt="배터리" style={{ width: 26, height: 26 }} />
         </div>
       </div>
       {/* 화면 영역 */}
