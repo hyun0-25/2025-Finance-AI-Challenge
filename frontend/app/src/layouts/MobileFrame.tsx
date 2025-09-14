@@ -128,7 +128,7 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           <div
             style={{
               position: "absolute",
-              bottom: 10,
+              bottom: 6,
               left: "50%",
               transform: "translateX(-50%)",
               width: 150,
