@@ -109,8 +109,6 @@ const MyPage: React.FC = () => {
     <div style={{ 
       height: '100vh',
       position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
     }}>
       {/* 헤더 */}
       <div style={{
@@ -159,9 +157,7 @@ const MyPage: React.FC = () => {
       {/* 메인 컨텐츠 영역 */}
       <div style={{ 
         padding: '0 20px',
-        flex: 1,
         overflowY: 'auto',
-        paddingBottom: '90px' // NavigationBar 공간 확보
       }}>
         <h2 style={{
           fontSize: '20px',
@@ -454,15 +450,8 @@ const MyPage: React.FC = () => {
         )}
       </div>
       
-      {/* NavigationBar를 항상 하단에 고정 */}
-      <div style={{ 
-        position: 'absolute', 
-        bottom: 50, 
-        left: 0, 
-        right: 0 
-      }}>
-        <NavigationBar />
-      </div>
+      {/* NavigationBar는 이제 fixed로 독립적으로 하단에 고정됨 */}
+      <NavigationBar />
     </div>
   );
 };

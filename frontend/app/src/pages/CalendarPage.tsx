@@ -245,8 +245,10 @@ const CalendarPage: React.FC = () => {
 
   return (
     <div className="calendar-page" 
-      style={{ position: 'relative', maxHeight: '100vh',
-      display: 'flex', flexDirection: 'column'}}>
+      style={{ 
+      maxHeight: '100vh',
+      position: 'relative',
+      }}>
       <div>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
@@ -347,7 +349,7 @@ const CalendarPage: React.FC = () => {
         style={{ 
           position: 'absolute', 
           right: 10, 
-          bottom: -40, 
+          bottom: -50, 
           width: 72, 
           height: 72, 
           borderRadius: '50%', 
@@ -359,7 +361,7 @@ const CalendarPage: React.FC = () => {
           alignItems: 'center', 
           justifyContent: 'center', 
           cursor: 'pointer',
-          zIndex: 1000
+          zIndex: 1000, // NavigationBar보다 위에 표시
         }}
       >
         +
@@ -499,11 +501,11 @@ const CalendarPage: React.FC = () => {
 {/* NavigationBar를 항상 하단에 고정 */}
       <div style={{ 
         position: 'absolute', 
-        bottom: -170, 
+        bottom: -220, 
         left: 0, 
         right: 0 
       }}>
-        <NavigationBar />
+      <NavigationBar />
       </div>
     </div>
   );

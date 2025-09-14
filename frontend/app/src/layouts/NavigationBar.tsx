@@ -36,6 +36,10 @@ const NavigationBar: React.FC = () => {
 
   return (
     <div style={{
+      position: 'absolute',
+      bottom: '50px', // 홈 인디케이터 위에 위치
+      left: '0',
+      right: '0',
       height: '70px',
       backgroundColor: COLORS.main,
       display: 'flex',
@@ -45,7 +49,7 @@ const NavigationBar: React.FC = () => {
       paddingTop: '4px',
       borderTop: `1px solid ${COLORS.main}`,
       borderRadius: '0 0 38px 38px',
-      zIndex: 1000
+      zIndex: 0
     }}>
       {tabs.map((tab) => (
         <div
