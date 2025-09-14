@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
 
@@ -262,13 +263,13 @@ const CalendarPage: React.FC = () => {
         minHeight: '200px'
 }}>
         <div style={{ 
-          fontSize: '16px', 
+          fontSize: '20px', 
           fontWeight: '600', 
           marginBottom: '12px',
           color: COLORS.black
         }}>
-          {/* 선택된 날짜 표시 d. 요일 한글로 */}
-          {format(selectedDate, 'd. eeee')}
+          {/* 선택된 날짜 표시 d. 요일 한글로 한글자만*/}
+          {format(selectedDate, 'd. eee', { locale: ko })}
         </div>
         
         {selectedDateSchedules.length > 0 ? (
@@ -288,21 +289,47 @@ const CalendarPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                   <div 
                     style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
+                      width: '4px',
+                      height: '50px',
                       backgroundColor: schedule.scheduleColor || COLORS.main,
                       marginRight: '12px',
-                      flexShrink: 0
+                      flexShrink: 0,
                     }}
                   />
-                  <span style={{ 
-                    fontSize: '15px', 
-                    color: COLORS.black,
-                    fontWeight: '500'
-                  }}>
-                    {schedule.scheduleName}
-                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ 
+                      fontSize: '16px', 
+                      color: COLORS.black,
+                      fontWeight: '600',
+                      lineHeight: '1.2',
+                      marginBottom: '6px'
+                    }}>
+                      {schedule.scheduleName}
+                    </div>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      color: '#666',
+                      fontWeight: '400',
+                      lineHeight: '1.2',
+                      marginLeft: '2px'
+                    }}>
+                      {(() => {
+                        const startDate = new Date(schedule.scheduleStartDate);
+                        const endDate = new Date(schedule.scheduleEndDate);
+                        
+                        // 같은 날인지 확인
+                        const isSameDay = startDate.toDateString() === endDate.toDateString();
+                        
+                        if (isSameDay) {
+                          // 같은 날이면 "m.d.요일" 형식
+                          return format(startDate, 'M.d.eee', { locale: ko });
+                        } else {
+                          // 다른 날이면 "m.d.요일 - m.d.요일" 형식
+                          return `${format(startDate, 'M.d.eee', { locale: ko })} - ${format(endDate, 'M.d.eee', { locale: ko })}`;
+                        }
+                      })()}
+                    </div>
+                  </div>
                 </div>
                 
                 {/* AI 체크리스트 보기 버튼 - 체크리스트가 있는 경우에만 표시 */}
