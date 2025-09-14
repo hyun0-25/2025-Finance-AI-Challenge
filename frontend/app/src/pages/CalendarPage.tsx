@@ -3,8 +3,6 @@ import axios from 'axios';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
-import NavigationBar from '../layouts/NavigationBar';
-
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -246,9 +244,9 @@ const CalendarPage: React.FC = () => {
   return (
     <div className="calendar-page" 
       style={{ 
-      maxHeight: '100vh',
-      position: 'relative',
-      }}>
+      minHeight: '100vh',
+      position: 'relative'
+    }}>
       <div>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
@@ -342,31 +340,6 @@ const CalendarPage: React.FC = () => {
         )}
       </div>
       
-      <button 
-        className="calendar-add-btn" 
-        onClick={() => navigate('/schedule-register')} 
-        aria-label="일정 등록"
-        style={{ 
-          position: 'absolute', 
-          right: 10, 
-          bottom: -50, 
-          width: 72, 
-          height: 72, 
-          borderRadius: '50%', 
-          background: COLORS.accent, 
-          color: COLORS.white, 
-          fontSize: 50, 
-          border: 'none', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          cursor: 'pointer',
-          zIndex: 1000, // NavigationBar보다 위에 표시
-        }}
-      >
-        +
-      </button>
-
       {/* AI 체크리스트 모달 */}
       {showModal && modalSchedule && (
         <div 
@@ -498,15 +471,31 @@ const CalendarPage: React.FC = () => {
           </div>
         </div>
       )}
-{/* NavigationBar를 항상 하단에 고정 */}
-      <div style={{ 
-        position: 'absolute', 
-        bottom: -220, 
-        left: 0, 
-        right: 0 
-      }}>
-      <NavigationBar />
-      </div>
+      
+      {/* 일정추가 버튼 - 페이지 내부 고정 위치 */}
+      <button 
+        className="calendar-add-btn" 
+        onClick={() => navigate('/schedule-register')} 
+        aria-label="일정 등록"
+        style={{ 
+          position: 'absolute', 
+          right: 10, 
+          bottom: 220,
+          width: 72, 
+          height: 72, 
+          borderRadius: '50%', 
+          background: COLORS.accent, 
+          color: COLORS.white, 
+          fontSize: 50, 
+          border: 'none', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          cursor: 'pointer',
+        }}
+      >
+        +
+      </button>
     </div>
   );
 };
