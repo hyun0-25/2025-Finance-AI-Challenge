@@ -86,6 +86,30 @@ const CalendarPage: React.FC = () => {
     }
   };
 
+  // 일정 삭제 API 호출
+  const deleteSchedule = async (scheduleId: number) => {
+    try {
+      console.log(`일정 삭제 요청: ${scheduleId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}`);
+      console.log('일정 삭제 성공');
+      // 삭제 후 일정 목록 다시 불러오기
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const response = await axios.get(`${API_BASE_URL}/calendars`, { params: { year, month } });
+      const scheduleData = response.data.scheduleListResponseDtoList || [];
+      setSchedules(scheduleData);
+    } catch (error) {
+      console.error('일정 삭제 실패:', error);
+    }
+  };
+
+  // 일정 삭제 확인 핸들러
+  const handleDeleteSchedule = (scheduleId: number, scheduleName: string) => {
+    if (window.confirm(`"${scheduleName}" 일정을 삭제하시겠습니까?`)) {
+      deleteSchedule(scheduleId);
+    }
+  };
+
   // AI 체크리스트 버튼 클릭 핸들러
   const handleChecklistClick = async (scheduleId: number) => {
     const detail = scheduleDetails[scheduleId];
@@ -320,9 +344,29 @@ const CalendarPage: React.FC = () => {
                       color: COLORS.black,
                       fontWeight: '600',
                       lineHeight: '1.2',
-                      marginBottom: '6px'
+                      marginBottom: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}>
-                      {schedule.scheduleName}
+                      <span>{schedule.scheduleName}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteSchedule(schedule.scheduleId, schedule.scheduleName);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: COLORS.gray,
+                          fontSize: '16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        ×
+                      </button>
                     </div>
                     <div style={{ 
                       fontSize: '14px', 

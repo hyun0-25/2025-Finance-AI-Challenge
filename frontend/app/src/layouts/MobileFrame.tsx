@@ -13,11 +13,11 @@ interface MobileFrameProps {
 
 const FRAME_WIDTH = 434;
 const FRAME_HEIGHT = 898;
-const FRAME_RADIUS = 45;
+const FRAME_RADIUS = 60;
 const FRAME_BORDER = 4;
 const SCREEN_WIDTH = FRAME_WIDTH - FRAME_BORDER * 2;
 const SCREEN_HEIGHT = FRAME_HEIGHT - FRAME_BORDER * 2;
-const SCREEN_RADIUS = 38;
+const SCREEN_RADIUS = 55;
 
 export default function MobileFrame({ children }: MobileFrameProps) {
   const navigate = useNavigate();
