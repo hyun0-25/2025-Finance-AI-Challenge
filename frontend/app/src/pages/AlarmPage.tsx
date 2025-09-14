@@ -57,7 +57,7 @@ export default function AlarmPage() {
             src="/src/assets/icons/back.png" 
             alt="뒤로가기" 
             style={{ 
-              width: '12px', 
+              width: '16px', 
               height: '24px' 
             }} 
           />

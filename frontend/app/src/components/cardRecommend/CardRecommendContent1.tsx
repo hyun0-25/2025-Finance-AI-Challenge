@@ -20,7 +20,31 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
   const [hoverIdx, setHoverIdx] = React.useState<number | null>(null);
 
   return (
-    <div style={{ textAlign: "left", padding: "0 15px" }}>
+    <div style={{ textAlign: "left", padding: "0 20px" }}>
+            {/* 상단 바 */}
+      <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #eee', marginTop: 60 }}>
+        <button 
+          onClick={() => navigate('/calendar')} 
+          style={{ 
+            background: 'none', 
+            border: 'none',
+            marginTop: 12,
+            marginRight: 16,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <img 
+            src="/src/assets/icons/back.png" 
+            alt="뒤로가기" 
+            style={{ 
+              width: '16px', 
+              height: '24px' 
+            }} 
+          />
+        </button>
+      </div>
       <div style={{ fontWeight: 700, fontSize: 40, color: "#222", marginBottom: 12 }}>
         AI가 추천한<br />나영님을 위한<br /> 카드
       </div>
@@ -33,7 +57,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
           style={{
             width: 380,
             height: 166,
-            background: hoverIdx === idx ? COLORS.accent : COLORS.light,
+            background: hoverIdx === idx ? COLORS.main : COLORS.light,
             borderRadius: 24,
             display: "flex",
             alignItems: "center",
@@ -49,7 +73,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
             alt={card.cardName}
             style={{
               width: 80,
-              borderRadius: 8,
+              borderRadius: 4,
               objectFit: "cover",
               margin: 16,
             }}
@@ -61,7 +85,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
             </div>
             <div style={{ fontSize: 18, width: 240, marginBottom: 20 }}>{card.benefit}</div>
           </div>
-          <span style={{ position: "absolute", right: 35, fontSize: 50, color: COLORS.accent }}>›</span>
+          <span style={{ position: "absolute", right: 40, fontSize: 60, color: COLORS.accent }}>›</span>
         </div>
       ))}
     </div>
