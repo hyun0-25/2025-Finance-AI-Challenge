@@ -14,13 +14,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const initialForm = {
   scheduleName: '',
-  scheduleColor: '#FFB6B6',
+  scheduleColor: '#000000',
   scheduleStartDate: '',
   scheduleEndDate: '',
   scheduleFrequencyType: 'NONE',
-  scheduleRepeatEndDate: '',
+  scheduleRepeatEndDate: 'null',
   scheduleIsChecklist: false,
-  scheduleLocation: '',
+  // scheduleLocation: '', //api에 없음
 };
 
 const frequencyOptions = [
@@ -68,6 +68,7 @@ const ScheduleRegisterPage: React.FC = () => {
         ...form,
         scheduleRepeatEndDate: form.scheduleFrequencyType === 'NONE' ? null : form.scheduleRepeatEndDate || null,
       };
+      console.log('전송 데이터:', data);
       await axios.post(`${API_BASE_URL}/schedules`, data);
       navigate('/calendar');
     } catch (err) {
@@ -155,7 +156,8 @@ const ScheduleRegisterPage: React.FC = () => {
         <div style={{marginRight: 24 }}>
           <img src={LocationIcon} alt="장소" style={{ width: 22, height: 22 }} />
         </div>
-        <input name="scheduleLocation" value={form.scheduleLocation} onChange={handleChange} placeholder="장소를 입력해 주세요." style={{fontSize: 15, border: 'none', borderBottom: '0px solid #eee' }} />
+        {/* value={form.scheduleLocation} 제외 */}
+        <input name="scheduleLocation" onChange={handleChange} placeholder="장소를 입력해 주세요." style={{fontSize: 15, border: 'none', borderBottom: '0px solid #eee' }} />
       </div>
 
       {/* -------- */}

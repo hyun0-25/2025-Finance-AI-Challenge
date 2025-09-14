@@ -71,12 +71,30 @@ const CalendarPage: React.FC = () => {
     });
   };
 
+  // AI 체크리스트 활성화 API 호출
+  const enableChecklist = async (scheduleId: number) => {
+    try {
+      console.log(`체크리스트 활성화 요청: ${scheduleId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/on-off`, {
+        enable: true
+      });
+      console.log('체크리스트 활성화 성공');
+      // 활성화 후 상세 정보 다시 가져오기
+      await fetchScheduleDetail(scheduleId);
+    } catch (error) {
+      console.error('체크리스트 활성화 실패:', error);
+    }
+  };
+
   // AI 체크리스트 버튼 클릭 핸들러
-  const handleChecklistClick = (scheduleId: number) => {
+  const handleChecklistClick = async (scheduleId: number) => {
     const detail = scheduleDetails[scheduleId];
     if (detail && detail.scheduleIsChecklist) {
       setModalSchedule(detail);
       setShowModal(true);
+    } else {
+      // 체크리스트가 비활성화된 경우 활성화 요청
+      await enableChecklist(scheduleId);
     }
   };
 
@@ -348,9 +366,7 @@ const CalendarPage: React.FC = () => {
                       : '1px solid #E0E0E0',
                     borderRadius: '8px',
                     fontSize: '14px',
-                    cursor: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
-                      ? 'pointer' 
-                      : 'not-allowed',
+                    cursor: 'pointer',
                     whiteSpace: 'nowrap',
                     fontWeight: '700',
                     display: 'flex',
@@ -358,12 +374,7 @@ const CalendarPage: React.FC = () => {
                     justifyContent: 'center',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                   }}
-                  onClick={() => {
-                    if (scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist) {
-                      handleChecklistClick(schedule.scheduleId);
-                    }
-                  }}
-                  disabled={!scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist}
+                  onClick={() => handleChecklistClick(schedule.scheduleId)}
                 >
                   AI 체크리스트 보기
                 </button>
@@ -527,7 +538,7 @@ const CalendarPage: React.FC = () => {
           width: 72, 
           height: 72, 
           borderRadius: '50%', 
-          background: COLORS.accent, 
+          background: COLORS.sub, 
           color: COLORS.white, 
           fontSize: 50, 
           border: 'none', 
