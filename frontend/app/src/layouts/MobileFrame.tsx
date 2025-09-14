@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MobileFrameProps {
   children: React.ReactNode;
@@ -13,6 +14,8 @@ const SCREEN_HEIGHT = FRAME_HEIGHT - FRAME_BORDER * 2;
 const SCREEN_RADIUS = 38;
 
 export default function MobileFrame({ children }: MobileFrameProps) {
+  const navigate = useNavigate();
+  
   const [time, setTime] = useState(() => {
     const now = new Date();
     return now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
@@ -36,7 +39,7 @@ export default function MobileFrame({ children }: MobileFrameProps) {
         background: "#18181b",
         position: "relative",
         overflow: "hidden",
-        margin: "40px auto",
+        margin: "20px auto",
       }}
     >
       {/* 상단 바 */}
@@ -55,8 +58,14 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           pointerEvents: "none",
         }}
       >
-        {/* 현재 시간 */}
-        <span style={{ fontSize: 22, fontWeight: 500, color: "#222", marginLeft: 40 }}>{time}</span>
+        {/* 현재 시간 (클릭시 "/"경로로 이동*/}
+        <span style={{ 
+          fontSize: 22, 
+          fontWeight: 500, 
+          color: "#222", 
+          marginLeft: 40, 
+          pointerEvents: "auto", 
+        }} onClick={() => { navigate("/") }}>{time}</span>
         {/* 펀치홀 */}
         <div
           style={{
