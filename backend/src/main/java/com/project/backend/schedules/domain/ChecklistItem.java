@@ -1,5 +1,7 @@
 package com.project.backend.schedules.domain;
 
+import com.project.backend.cards.domain.Benefit;
+import com.project.backend.cards.domain.BenefitCategory;
 import com.project.backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -19,20 +21,28 @@ public class ChecklistItem extends BaseEntity {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
+    @Enumerated(EnumType.STRING)
+    private BenefitCategory checklistItemCategory;
+
     @Column(nullable = false)
-    private String checklistItemName;
+    private String checklistItemContent;
 
     @Column(nullable = false)
     private Boolean checklistItemIsChecked;
 
-    private ChecklistItem(Schedule schedule, String checklistItemName, Boolean checklistItemIsChecked) {
+    private ChecklistItem(Schedule schedule, BenefitCategory checklistItemCategory, String checklistItemContent, Boolean checklistItemIsChecked) {
         this.schedule = schedule;
-        this.checklistItemName = checklistItemName;
+        this.checklistItemCategory = checklistItemCategory;
+        this.checklistItemContent = checklistItemContent;
         this.checklistItemIsChecked = checklistItemIsChecked;
     }
 
-    public static ChecklistItem createChecklist(Schedule schedule, String checklistItemName, Boolean checklistItemIsChecked) {
-        return new ChecklistItem(schedule, checklistItemName, checklistItemIsChecked);
+    public static ChecklistItem createChecklistByAI(Schedule schedule, BenefitCategory checklistItemCategory, String checklistItemContent, Boolean checklistItemIsChecked) {
+        return new ChecklistItem(schedule, checklistItemCategory, checklistItemContent, checklistItemIsChecked);
+    }
+
+    public static ChecklistItem createChecklistByUser(Schedule schedule, String checklistItemContent, Boolean checklistItemIsChecked) {
+        return new ChecklistItem(schedule, null, checklistItemContent, checklistItemIsChecked);
     }
 
     public void updateIsChecked(boolean isChecked) {
