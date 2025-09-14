@@ -36,7 +36,6 @@ const LoadingPage: React.FC = () => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000,
       animation: 'fadeIn 0.3s ease-out'
     }}>
       {/* 로딩 텍스트 */}
