@@ -245,7 +245,7 @@ const CalendarPage: React.FC = () => {
   return (
     <div className="calendar-page" 
       style={{ 
-      minHeight: '100vh',
+      maxHeight: '100vh',
       position: 'relative'
     }}>
       <div>
@@ -332,25 +332,41 @@ const CalendarPage: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* AI 체크리스트 보기 버튼 - 체크리스트가 있는 경우에만 표시 */}
-                {scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist && (
-                  <button
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: COLORS.accent,
-                      color: COLORS.white,
-                      border: 'none',
-                      borderRadius: '15px',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      fontWeight: '500'
-                    }}
-                    onClick={() => handleChecklistClick(schedule.scheduleId)}
-                  >
-                    AI 체크리스트 보기
-                  </button>
-                )}
+                {/* AI 체크리스트 보기 버튼 - 항상 표시 */}
+                <button
+                  style={{
+                    width: '143px',
+                    height: '35px',
+                    backgroundColor: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? COLORS.white 
+                      : '#F5F5F5',
+                    color: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? COLORS.sub 
+                      : COLORS.gray,
+                    border: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? `1px solid ${COLORS.main}` 
+                      : '1px solid #E0E0E0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    cursor: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? 'pointer' 
+                      : 'not-allowed',
+                    whiteSpace: 'nowrap',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}
+                  onClick={() => {
+                    if (scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist) {
+                      handleChecklistClick(schedule.scheduleId);
+                    }
+                  }}
+                  disabled={!scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist}
+                >
+                  AI 체크리스트 보기
+                </button>
               </div>
             ))}
           </div>
@@ -507,7 +523,7 @@ const CalendarPage: React.FC = () => {
         style={{ 
           position: 'absolute', 
           right: 10, 
-          bottom: 220,
+          bottom: -50,
           width: 72, 
           height: 72, 
           borderRadius: '50%', 
