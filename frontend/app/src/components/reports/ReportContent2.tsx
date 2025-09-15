@@ -46,23 +46,12 @@ export default function ReportContent2({ activities }: ReportContent2Props) {
         </div>
       ))}
       {/* 아래쪽 화살표 */}
-      <button
-        onClick={() => {
-          const cardRecommendSection = document.getElementById('card-recommend-section');
-          if (cardRecommendSection) {
-            cardRecommendSection.scrollIntoView({ 
-              behavior: 'smooth',
-              block: 'start' 
-            });
-          }
-        }}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 0,
-        }}
-      >
+      <div style={{
+        animation: 'bounce 2s infinite',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <img 
           src="/src/assets/icons/under.png" 
           alt="아래쪽 화살표" 
@@ -71,7 +60,22 @@ export default function ReportContent2({ activities }: ReportContent2Props) {
             height: '16px' 
           }} 
         />
-      </button>
+      </div>
+      
+      {/* CSS 애니메이션 */}
+      <style>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-12px);
+          }
+          60% {
+            transform: translateY(-6px);
+          }
+        }
+      `}</style>
     </div>
   );
 }

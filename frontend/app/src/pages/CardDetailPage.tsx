@@ -14,9 +14,9 @@ export default function CardDetailPage() {
   return (
     <div style={{ paddingBottom: 24, minHeight: '100vh', overflow: 'auto', background: '#fff' }}>
       {/* 상단 바 */}
-      <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #eee', marginTop: 60, marginLeft: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 60, marginLeft: 20 }}>
         <button 
-          onClick={() => navigate('/calendar')} 
+          onClick={() => navigate('/card-recommend')} 
           style={{ 
             background: 'none', 
             border: 'none',
