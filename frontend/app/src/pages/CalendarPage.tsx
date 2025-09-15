@@ -143,6 +143,19 @@ const CalendarPage: React.FC = () => {
     }
   };
 
+  // 체크리스트 항목 삭제
+  const deleteChecklistItem = async (scheduleId: number, checklistItemId: number) => {
+    try {
+      console.log(`체크리스트 항목 삭제 요청: scheduleId=${scheduleId}, checklistItemId=${checklistItemId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/checklist/${checklistItemId}`);
+      console.log('체크리스트 항목 삭제 성공');
+      // 삭제 후 상세 정보 다시 가져오기
+      await fetchScheduleDetail(scheduleId);
+    } catch (error) {
+      console.error('체크리스트 항목 삭제 실패:', error);
+    }
+  };
+
   // AI 체크리스트 버튼 클릭 핸들러
   const handleChecklistClick = async (scheduleId: number) => {
     const detail = scheduleDetails[scheduleId];
@@ -572,31 +585,57 @@ const CalendarPage: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     padding: '12px 0',
-                    borderBottom: index < modalSchedule.checklistItemResponseDtoList.length - 1 ? '1px solid #f0f0f0' : 'none',
-                    cursor: 'pointer'
+                    borderBottom: index < modalSchedule.checklistItemResponseDtoList.length - 1 ? '1px solid #f0f0f0' : 'none'
                   }}
-                  onClick={() => toggleChecklistItem(modalSchedule.scheduleId, item.checklistItemId)}
                 >
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    backgroundColor: item.checklistItemIsChecked ? COLORS.accent : '#f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: '12px'
-                  }}>
+                  <div 
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: item.checklistItemIsChecked ? COLORS.accent : '#f0f0f0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: '12px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => toggleChecklistItem(modalSchedule.scheduleId, item.checklistItemId)}
+                  >
                     {item.checklistItemIsChecked && (
                       <span style={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}>✓</span>
                     )}
                   </div>
-                  <span style={{ 
-                    fontSize: '14px', 
-                    color: item.checklistItemIsChecked ? COLORS.black : COLORS.gray,
-                  }}>
+                  <span 
+                    style={{ 
+                      fontSize: '14px', 
+                      color: item.checklistItemIsChecked ? COLORS.black : COLORS.gray,
+                      flex: 1,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => toggleChecklistItem(modalSchedule.scheduleId, item.checklistItemId)}
+                  >
                     {item.checklistItemContent}
                   </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteChecklistItem(modalSchedule.scheduleId, item.checklistItemId);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: COLORS.gray,
+                      fontSize: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
               
