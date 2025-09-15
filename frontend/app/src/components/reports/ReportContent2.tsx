@@ -46,17 +46,36 @@ export default function ReportContent2({ activities }: ReportContent2Props) {
         </div>
       ))}
       {/* 아래쪽 화살표 */}
-        <svg width="50" height="50" viewBox="0 0 36 36">
-          <path
-            d="M10 15l8 8 8-8"
-            stroke="#c3c3c3"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            
-          />
-        </svg>
+      <div style={{
+        animation: 'bounce 2s infinite',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <img 
+          src="/src/assets/icons/under.png" 
+          alt="아래쪽 화살표" 
+          style={{ 
+            width: '28px', 
+            height: '16px' 
+          }} 
+        />
+      </div>
+      
+      {/* CSS 애니메이션 */}
+      <style>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-12px);
+          }
+          60% {
+            transform: translateY(-6px);
+          }
+        }
+      `}</style>
     </div>
   );
 }

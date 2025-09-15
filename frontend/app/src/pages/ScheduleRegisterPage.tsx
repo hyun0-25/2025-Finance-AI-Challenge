@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { COLORS } from '../styles/colors';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import XIcon from '../assets/icons/schedule/X.png';
 import CheckIcon from '../assets/icons/schedule/check.png';
@@ -11,6 +10,141 @@ import LocationIcon from '../assets/icons/schedule/location.png';
 import CheckbosIcon from '../assets/icons/schedule/checkbox.png'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// iOS 스타일 토글 버튼 컴포넌트
+const ToggleButton: React.FC<{ checked: boolean; onChange: () => void; disabled?: boolean }> = ({ 
+  checked, 
+  onChange, 
+  disabled = false 
+}) => {
+  return (
+    <div
+      onClick={!disabled ? onChange : undefined}
+      style={{
+        width: 51,
+        height: 31,
+        borderRadius: 16,
+        backgroundColor: checked ? '#007AFF' : '#E5E5EA',
+        position: 'relative',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'background-color 0.3s ease',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '2px',
+      }}
+    >
+      <div
+        style={{
+          width: 27,
+          height: 27,
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          transform: checked ? 'translateX(20px)' : 'translateX(0px)',
+          transition: 'transform 0.3s ease',
+        }}
+      />
+    </div>
+  );
+};
+
+// 시간 직접 입력 컴포넌트
+const TimeInputManual: React.FC<{
+  amPm: string;
+  hour: string;
+  minute: string;
+  onAmPmChange: (value: string) => void;
+  onHourChange: (value: string) => void;
+  onMinuteChange: (value: string) => void;
+}> = ({ amPm, hour, minute, onAmPmChange, onHourChange, onMinuteChange }) => {
+  
+  const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // 숫자만 허용
+    if (value === '' || (parseInt(value) >= 1 && parseInt(value) <= 12)) {
+      onHourChange(value);
+    }
+  };
+  
+  const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // 숫자만 허용
+    if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59)) {
+      onMinuteChange(value.padStart(2, '0'));
+    }
+  };
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+      <span 
+        style={{ 
+          fontSize: 15, 
+          color: '#666', 
+          cursor: 'pointer',
+          textDecoration: 'underline'
+        }}
+        onClick={() => onAmPmChange(amPm === '오전' ? '오후' : '오전')}
+      >
+        {amPm}
+      </span>
+      <input
+        type="text"
+        value={hour}
+        onChange={handleHourChange}
+        placeholder="12"
+        maxLength={2}
+        style={{
+          width: 24,
+          fontSize: 15,
+          border: 'none',
+          background: 'transparent',
+          color: '#666',
+          outline: 'none',
+          textAlign: 'center'
+        }}
+      />
+      <span style={{ fontSize: 15, color: '#666' }}>:</span>
+      <input
+        type="text"
+        value={minute}
+        onChange={handleMinuteChange}
+        placeholder="00"
+        maxLength={2}
+        style={{
+          width: 24,
+          fontSize: 15,
+          border: 'none',
+          background: 'transparent',
+          color: '#666',
+          outline: 'none',
+          textAlign: 'center'
+        }}
+      />
+    </div>
+  );
+};
+const CustomDropdown: React.FC<{
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}> = ({ options, value, onChange }) => {
+  return (
+    <select 
+      value={value} 
+      onChange={(e) => onChange(e.target.value)}
+      style={{ 
+        fontSize: 15, 
+        border: 'none',
+        background: 'transparent',
+        color: '#333',
+        outline: 'none'
+      }}
+    >
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  );
+};
 
 const initialForm = {
   scheduleName: '',
@@ -35,11 +169,48 @@ const ScheduleRegisterPage: React.FC = () => {
   const [form, setForm] = useState(initialForm);
   const [allDay, setAllDay] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // 시간 입력을 위한 상태
+  const [startAmPm, setStartAmPm] = useState('오전');
+  const [startHour, setStartHour] = useState('12');
+  const [startMinute, setStartMinute] = useState('00');
+  const [endAmPm, setEndAmPm] = useState('오전');
+  const [endHour, setEndHour] = useState('1');
+  const [endMinute, setEndMinute] = useState('00');
+  
   const navigate = useNavigate();
+  const location = useLocation();
   const colorInputRef = useRef<HTMLInputElement>(null);
 
+  // 캘린더에서 전달받은 선택된 날짜 처리 또는 기본값 설정
+  useEffect(() => {
+    const selectedDate = location.state?.selectedDate;
+    if (selectedDate) {
+      // 한국 시간대를 고려한 날짜 처리
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      setForm(prev => ({
+        ...prev,
+        scheduleStartDate: `${dateStr}T00:00`,
+        scheduleEndDate: `${dateStr}T00:00`
+      }));
+    } else {
+      // 기본값: 2025년 9월 16일
+      const defaultDate = '2025-09-16';
+      setForm(prev => ({
+        ...prev,
+        scheduleStartDate: `${defaultDate}T00:00`,
+        scheduleEndDate: `${defaultDate}T00:00`
+      }));
+    }
+  }, [location.state]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setForm(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -57,21 +228,58 @@ const ScheduleRegisterPage: React.FC = () => {
   const handleAllDay = () => {
     setAllDay(v => !v);
     if (!allDay) {
-      setForm(prev => ({ ...prev, scheduleStartDate: prev.scheduleStartDate.split('T')[0] + 'T00:00:00', scheduleEndDate: prev.scheduleEndDate.split('T')[0] + 'T23:59:59' }));
+      // 하루종일 토글을 켤 때: 시작은 00:00, 끝은 23:59로 설정
+      const startDate = form.scheduleStartDate.split('T')[0];
+      const endDate = form.scheduleEndDate.split('T')[0];
+      setForm(prev => ({ 
+        ...prev, 
+        scheduleStartDate: `${startDate}T00:00`,
+        scheduleEndDate: `${endDate}T23:59`
+      }));
+    } else {
+      // 하루종일 토글을 끌 때: 기본 시간으로 설정
+      const startDate = form.scheduleStartDate.split('T')[0];
+      const endDate = form.scheduleEndDate.split('T')[0];
+      setForm(prev => ({ 
+        ...prev, 
+        scheduleStartDate: `${startDate}T00:00`,
+        scheduleEndDate: `${endDate}T00:00`
+      }));
     }
   };
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const data = {
+      // 시간 변환 함수
+      const convertTime = (amPm: string, hour: string, minute: string) => {
+        let hour24 = parseInt(hour) || 0;
+        if (amPm === '오후' && hour24 !== 12) {
+          hour24 += 12;
+        } else if (amPm === '오전' && hour24 === 12) {
+          hour24 = 0;
+        }
+        return `${hour24.toString().padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+      };
+
+      // API 전송용 데이터 준비
+      const apiData = {
         ...form,
+        // 하루종일인 경우 시작시간은 00:00:00, 종료시간은 23:59:59로 설정
+        scheduleStartDate: allDay 
+          ? `${form.scheduleStartDate.split('T')[0]}T00:00:00`
+          : `${form.scheduleStartDate.split('T')[0]}T${convertTime(startAmPm, startHour, startMinute)}`,
+        scheduleEndDate: allDay 
+          ? `${form.scheduleEndDate.split('T')[0]}T23:59:59`
+          : `${form.scheduleEndDate.split('T')[0]}T${convertTime(endAmPm, endHour, endMinute)}`,
         scheduleRepeatEndDate: form.scheduleFrequencyType === 'NONE' ? null : form.scheduleRepeatEndDate || null,
       };
-      console.log('전송 데이터:', data);
-      await axios.post(`${API_BASE_URL}/schedules`, data);
+      
+      console.log('전송 데이터:', apiData);
+      await axios.post(`${API_BASE_URL}/schedules`, apiData);
       navigate('/calendar');
     } catch (err) {
+      console.error('등록 실패:', err);
       alert('등록 실패');
     } finally {
       setLoading(false);
@@ -79,15 +287,49 @@ const ScheduleRegisterPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 412, maxHeight: '100vh'}}>
+    <>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      <div style={{ maxWidth: 412, maxHeight: '100vh'}}>
       {/* 상단 바: 닫기, 타이틀, 저장(체크) */}
       <div style={{ display: 'flex', alignItems: 'center', marginTop: 60, padding: '0 16px' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img src={XIcon} alt="닫기" style={{ width: 16, height: 16 }} />
         </button>
         <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 24 }}>일정 등록</div>
-        <button onClick={handleSubmit} style={{ background: 'none', border: 'none', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={CheckIcon} alt="저장" style={{ width: 32, height: 16 }} />
+        <button 
+          onClick={handleSubmit} 
+          disabled={loading}
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            width: 32, 
+            height: 32, 
+            cursor: loading ? 'not-allowed' : 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            opacity: loading ? 0.5 : 1
+          }}
+        >
+          {loading ? (
+            <div style={{ 
+              width: 16, 
+              height: 16, 
+              border: '2px solid #ddd', 
+              borderTop: '2px solid #007AFF',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }} />
+          ) : (
+            <img src={CheckIcon} alt="저장" style={{ width: 32, height: 16 }} />
+          )}
         </button>  
       </div>
 
@@ -100,7 +342,7 @@ const ScheduleRegisterPage: React.FC = () => {
           value={form.scheduleName}
           onChange={handleChange}
           placeholder="일정을 입력해 주세요."
-          style={{ flex: 1, fontSize: 15, border: 'none'}}
+          style={{ flex: 1, fontSize: 15, border: 'none', padding: 4}}
         />
         <input
           ref={colorInputRef}
@@ -117,62 +359,163 @@ const ScheduleRegisterPage: React.FC = () => {
       {/* 시간 세션 */}
       {/* -------- */}
       <div style={{ padding: '0 24px'}}>
-        <div style={{ display: 'flex', alignItems: 'center'}}>
-          <img src={ClockIcon} alt="시계" style={{ width: 22, height: 22, marginRight: 24  }} />
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16}}>
+          <img src={ClockIcon} alt="시계" style={{ width: 24, height: 24, marginRight: 24  }} />
           <span style={{fontSize: 15 }}>일자 및 시간</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 36, marginTop: 8 }}>
-          <input type={allDay ? 'date' : 'datetime-local'} name="scheduleStartDate" value={form.scheduleStartDate} onChange={handleChange} style={{ fontSize: 15, border: 'none', borderBottom: '1px solid #eee', flex: 1 }} />
+        
+        {/* 시작일 (고정) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginLeft: 46, paddingBottom: 8 }}>
+          <span style={{ fontSize: 15, color: '#333' }}>
+            {form.scheduleStartDate ? (() => {
+              const date = new Date(form.scheduleStartDate);
+              const year = date.getFullYear();
+              const month = date.getMonth() + 1;
+              const day = date.getDate();
+              const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+              return `${year}. ${month}.${day} ${weekday}요일`;
+            })() : '2025. 9.15 월요일'}
+          </span>
+          {!allDay && (
+            <TimeInputManual
+              amPm={startAmPm}
+              hour={startHour}
+              minute={startMinute}
+              onAmPmChange={setStartAmPm}
+              onHourChange={setStartHour}
+              onMinuteChange={setStartMinute}
+            />
+          )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 36,  marginTop: 8}}>
-          <input type={allDay ? 'date' : 'datetime-local'} name="scheduleEndDate" value={form.scheduleEndDate} onChange={handleChange} style={{ fontSize: 15, border: 'none', borderBottom: '1px solid #eee', flex: 1}} />
+        
+        {/* 종료일 */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginLeft: 46, paddingBottom: 8 }}>
+          <span 
+            style={{ 
+              fontSize: 15, 
+              color: '#333',
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'date';
+              input.value = form.scheduleEndDate ? form.scheduleEndDate.split('T')[0] : '';
+              input.onchange = (e) => {
+                const target = e.target as HTMLInputElement;
+                const newDate = target.value;
+                setForm(prev => ({
+                  ...prev,
+                  scheduleEndDate: `${newDate}T00:00`
+                }));
+              };
+              input.click();
+            }}
+          >
+            {form.scheduleEndDate ? (() => {
+              const date = new Date(form.scheduleEndDate);
+              const year = date.getFullYear();
+              const month = date.getMonth() + 1;
+              const day = date.getDate();
+              const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+              return `${year}. ${month}.${day} ${weekday}요일`;
+            })() : '2025. 9.15 월요일'}
+          </span>
+          {!allDay && (
+            <TimeInputManual
+              amPm={endAmPm}
+              hour={endHour}
+              minute={endMinute}
+              onAmPmChange={setEndAmPm}
+              onHourChange={setEndHour}
+              onMinuteChange={setEndMinute}
+            />
+          )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 36,  marginTop: 8 }}>
-          <span style={{ fontSize: 15, color: COLORS.black, flex: 1 }}>하루 종일</span>
-          <input type="checkbox" checked={allDay} onChange={handleAllDay} style={{ width: 18, height: 18, accentColor: COLORS.accent }} />
+        
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 46 }}>
+          <span style={{ fontSize: 16, fontWeight: 'bold', color: '#333', flex: 1 }}>하루 종일</span>
+          <ToggleButton checked={allDay} onChange={handleAllDay} />
         </div>
       </div>
 
       <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '24px'}} />
 
       {/* 반복 세션 */}
-      <div style={{ display: 'flex', padding: '0 24px'}}>
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: 24 }}>
-          <img src={RepeatIcon} alt="반복" style={{ width: 22, height: 22 }} />
+      <div style={{ padding: '0 24px'}}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={RepeatIcon} alt="반복" style={{ width: 24, height: 24, marginRight: 24 }} />
+            <CustomDropdown
+              options={frequencyOptions}
+              value={form.scheduleFrequencyType}
+              onChange={(value) => setForm(prev => ({ ...prev, scheduleFrequencyType: value }))}
+            />
+          </div>
+          {form.scheduleFrequencyType !== 'NONE' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 15, color: '#666' }}>반복 종료</span>
+              <input 
+                type="date" 
+                name="scheduleRepeatEndDate" 
+                value={form.scheduleRepeatEndDate} 
+                onChange={handleChange} 
+                style={{ 
+                  fontSize: 15, 
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#333',
+                  outline: 'none'
+                }} 
+              />
+            </div>
+          )}
         </div>
-        <select name="scheduleFrequencyType" value={form.scheduleFrequencyType} onChange={handleChange} style={{ fontSize: 15, border: 'none', borderBottom: '1px solid #eee'}}>
-          {frequencyOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-        </select>
-        {form.scheduleFrequencyType !== 'NONE' && (
-          <input type="date" name="scheduleRepeatEndDate" value={form.scheduleRepeatEndDate} onChange={handleChange} style={{ fontSize: 15, border: 'none', borderBottom: '1px solid #eee'}} />
-        )}
       </div>
 
       {/* -------- */}
       <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '24px'}} />
 
       {/* 장소 세션 */}
-      <div style={{ display: 'flex', padding: '0 24px'}}>
-        <div style={{marginRight: 24 }}>
-          <img src={LocationIcon} alt="장소" style={{ width: 22, height: 22 }} />
+      <div style={{ padding: '0 24px'}}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={LocationIcon} alt="장소" style={{ width: 24, height: 28, marginRight: 24 }} />
+          <input 
+            name="scheduleLocation" 
+            onChange={handleChange} 
+            placeholder="장소를 입력해 주세요." 
+            style={{
+              flex: 1,
+              fontSize: 15, 
+              border: 'none',
+              background: 'transparent',
+              outline: 'none'
+            }} 
+          />
         </div>
-        {/* value={form.scheduleLocation} 제외 */}
-        <input name="scheduleLocation" onChange={handleChange} placeholder="장소를 입력해 주세요." style={{fontSize: 15, border: 'none', borderBottom: '0px solid #eee' }} />
       </div>
 
       {/* -------- */}
       <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '24px'}} />
 
       {/* AI 체크리스트 세션 */}
-      <div style={{ display: 'flex',padding: '0 24px'}}>
-        <div style={{marginRight: 24 }}>
-          <img src={CheckbosIcon} alt="AI 체크리스트" style={{ width: 22, height: 22 }} />
+      <div style={{ padding: '0 24px'}}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={CheckbosIcon} alt="AI 체크리스트" style={{ width: 24, height: 24, marginRight: 24 }} />
+            <span style={{ fontSize: 15 }}>AI 체크리스트</span>
+          </div>
+          <ToggleButton 
+            checked={form.scheduleIsChecklist} 
+            onChange={() => setForm(prev => ({ ...prev, scheduleIsChecklist: !prev.scheduleIsChecklist }))} 
+          />
         </div>
-          <span style={{ alignItems: 'center', fontSize: 15, flex: 1 }}>AI 체크리스트</span>
-          <input type="checkbox" name="scheduleIsChecklist" checked={form.scheduleIsChecklist} onChange={handleChange} style={{ width: 18, height: 18, accentColor: COLORS.accent, marginLeft: 8 }} />
+        <div style={{ fontSize: 12, color: '#999', marginLeft: 46 }}>
+          * 일정을 자세하게 입력할수록 정확한 체크리스트를 제공합니다.
+        </div>
       </div>
-      <div style={{ marginTop: 8, fontSize: 12, color: '#ccc', marginLeft: 48 }}>* 일정을 자세하게 입력할수록 정확한 체크리스트를 제공합니다.</div>
-    </div>
+      </div>
+    </>
   );
 };
 

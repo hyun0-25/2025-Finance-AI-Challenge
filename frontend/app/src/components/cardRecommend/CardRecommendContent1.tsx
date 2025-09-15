@@ -22,9 +22,9 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
   return (
     <div style={{ textAlign: "left", padding: "0 20px" }}>
       {/* 상단 바 */}
-      <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #eee', marginTop: 60 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 60 }}>
         <button 
-          onClick={() => navigate('/calendar')} 
+          onClick={() => navigate('/reports')} 
           style={{ 
             background: 'none', 
             border: 'none',
@@ -45,10 +45,10 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
           />
         </button>
       </div>
-      <div style={{ fontWeight: 700, fontSize: 40, color: "#222", marginBottom: 12 }}>
+      <div style={{ fontWeight: 700, fontSize: 40, color: "#222", marginBottom: 12, marginLeft: 8 }}>
         AI가 추천한<br />나영님을 위한<br /> 카드
       </div>
-      <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 20, marginBottom: 12 }}>
+      <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 20, marginBottom: 12, marginLeft: 8 }}>
         총 {totalRecommend}회의 카드 추천을 받았어요!
       </div>
       {cards.map((card, idx) => ( 
@@ -85,9 +85,19 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
             </div>
             <div style={{ fontSize: 18, width: 240, marginBottom: 20 }}>{card.benefit}</div>
           </div>
-          <span style={{ position: "absolute", right: 40, fontSize: 60, color: COLORS.accent }}>›</span>
+          <img 
+            src="/src/assets/icons/right.png" 
+            alt="오른쪽 화살표" 
+            style={{ 
+              position: "absolute", 
+              right: 40, 
+              width: '16px', 
+              height: '28px' 
+            }} 
+          />
         </div>
       ))}
+      <div style={{ height: 20 }}></div>
     </div>
   );
 }
