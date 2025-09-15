@@ -46,16 +46,17 @@ export default function ReportContent2({ activities }: ReportContent2Props) {
         </div>
       ))}
       {/* 아래쪽 화살표 */}
-        {/* <svg width="50" height="50" viewBox="0 0 36 36">
+        <svg width="50" height="50" viewBox="0 0 36 36">
           <path
             d="M10 15l8 8 8-8"
             stroke="#c3c3c3"
-            strokeWidth="2.5"
+            strokeWidth="2"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
+            
           />
-        </svg> */}
+        </svg>
     </div>
   );
 }

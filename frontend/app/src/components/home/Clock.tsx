@@ -26,9 +26,9 @@ const Clock: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: 54, marginBottom: '1rem' }}>
+    <div style={{ textAlign: 'center', marginTop: 60, marginBottom: '1rem' }}>
       <div style={{ fontSize: 24 }}>{formatDate(now)}</div>
-      <div style={{ fontSize: 80, fontWeight: 'bold', letterSpacing: '2px' }}>{formatTime(now)}</div>
+      <div style={{ fontSize: 64, fontWeight: 'bold', letterSpacing: '2px' }}>{formatTime(now)}</div>
     </div>
   );
 };

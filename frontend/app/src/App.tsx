@@ -7,6 +7,8 @@ import CardDetailPage from "./pages/CardDetailPage";
 import AlarmPage from "./pages/AlarmPage";
 import CalendarPage from "./pages/CalendarPage";
 import ScheduleRegisterPage from "./pages/ScheduleRegisterPage";
+import MyPage from "./pages/MyPage";
+import LoadingPage from "./pages/LoadingPage";
 
 function App() {
   return (
@@ -18,8 +20,10 @@ function App() {
           <Route path="/card-recommend" element={<CardRecommendPage />} />
           <Route path="/card-detail/:cardName" element={<CardDetailPage />} />
           <Route path="/alarm" element={<AlarmPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/schedule-register" element={<ScheduleRegisterPage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </MobileFrame>
     </BrowserRouter>

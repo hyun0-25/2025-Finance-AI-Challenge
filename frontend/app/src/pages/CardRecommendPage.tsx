@@ -26,7 +26,7 @@ export default function CardRecommendPage() {
   ];
 
   return (
-    <div style={{ paddingTop: "54px", textAlign: "center" }}>
+    <div style={{}}>
       <CardRecommendContent1 cards={CardRecommendData} />
     </div>
   );

@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { COLORS } from '../styles/colors';
 
 export default function CardDetailPage() {
   const location = useLocation();
@@ -11,44 +12,99 @@ export default function CardDetailPage() {
   }
 
   return (
-    <div style={{ marginTop: 54,paddingTop: 24, paddingBottom: 24, height: '100vh', overflow: 'auto', background: '#fff' }}>
-      <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: 16, top: 54, fontSize: 24, background: 'none', border: 'none', cursor: 'pointer' }}>←</button>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
-        <img src={cardImg} alt={cardName} style={{ width: 100, borderRadius: 16, marginBottom: 16 }} />
-        <div style={{ fontWeight: 700, fontSize: 28 }}>{cardName}</div>
-        <div style={{ color: '#888', fontSize: 20, marginTop: 8 }}>OO만원(국내전용) / OO만원(해외겸용)</div>
+    <div style={{ paddingBottom: 24, minHeight: '100vh', overflow: 'auto', background: '#fff' }}>
+      {/* 상단 바 */}
+      <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #eee', marginTop: 60, marginLeft: 20 }}>
+        <button 
+          onClick={() => navigate('/calendar')} 
+          style={{ 
+            background: 'none', 
+            border: 'none',
+            marginTop: 12,
+            marginRight: 16,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center' 
+          }}
+        >
+          <img 
+            src="/src/assets/icons/back.png" 
+            alt="뒤로가기" 
+            style={{ 
+              width: '16px', 
+              height: '24px' 
+            }}                
+          />
+        </button>
       </div>
-      <div style={{ maxWidth: 400, margin: '0 auto', background: '#fff', borderRadius: 16, padding: 16 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+        <div style={{ fontWeight: 700, fontSize: 28 }}>{cardName}</div>
+        <img src={cardImg} alt={cardName} style={{ width: 100, borderRadius: 8, margin: 12 }} />
+        <div style={{ color: COLORS.black, fontSize: 18, marginTop: 8 }}>OO만원(국내전용) / OO만원(해외겸용)</div>
+      </div>
+      <div style={{ maxWidth: 400, margin: '0 12px', padding: 12 }}>
         {/* 맞춤 혜택 */}
-        <div style={{ border: '1px solid #339DFF', borderRadius: 12, padding: 12, marginBottom: 16 }}>
-          <div style={{ color: '#339DFF', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>맞춤혜택</div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8, marginBottom: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+          <div style={{ 
+            color: COLORS.sub, 
+            fontWeight: 700, 
+            fontSize: 18, 
+            lineHeight: 1.2
+          }}>
+            맞춤<br/>혜택
           </div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8, marginBottom: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-          </div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+          <div style={{ 
+            border: `1px solid ${COLORS.accent}`, 
+            borderRadius: 8,
+            padding: 10, 
+            backgroundColor: COLORS.light,
+            flex: 1
+          }}>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
+
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
+
+            <div>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
           </div>
         </div>
+
         {/* 주요 혜택 */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ color: '#222', fontWeight: 700, fontSize: 16, marginBottom: 8 }}>주요혜택</div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8, marginBottom: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+          <div style={{ 
+            color: COLORS.gray, 
+            fontWeight: 700, 
+            fontSize: 18, 
+            lineHeight: 1.2,
+            marginTop: 12,
+          }}>
+            주요<br/>혜택
           </div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8, marginBottom: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-          </div>
-          <div style={{ border: '1px dashed #339DFF', borderRadius: 8, padding: 8 }}>
-            <div style={{ color: '#007AFF', fontWeight: 600, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-            <div style={{ color: '#666', fontSize: 15 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+          <div style={{ flex: 1,
+            padding: 10, 
+          }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
+            
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
+            
+            <div>
+              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
+              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
+            </div>
           </div>
         </div>
         {/* 꼭 알아두세요 */}

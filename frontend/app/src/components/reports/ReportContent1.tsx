@@ -35,11 +35,24 @@ export default function ReportContent1({
             background: COLORS.main,
             color: "#222",
             marginLeft: 16,
-            borderRadius: 8,
-            padding: "4px 12px",
+            borderRadius: 12,
+            padding: "2px 12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            height: 32,
           }}
         >
           {year}년 {quarter}분기
+          <img 
+            src="/src/assets/icons/updown.png" 
+            alt="분기 선택" 
+            style={{ 
+              width: "14px", 
+              height: "44px",
+              cursor: "pointer"
+            }} 
+          />
         </span>
       </div>
       {/* 캐릭터 이름 */}
@@ -63,7 +76,7 @@ export default function ReportContent1({
         }}
       />
       {/* 문구 */}
-      <div style={{ fontWeight: 500, fontSize: 20, color: "#222", marginBottom: 24 }}>
+      <div style={{ fontWeight: 500, fontSize: 18, color: "#222", marginBottom: 24 }}>
         지난 3개월, {userName}의 시간은 이렇게 채워졌어요.
       </div>
     </div>

@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { COLORS } from '../styles/colors';
+
+// NavigationBar 아이콘 import
+import mypageIcon from '../assets/icons/navigation/mypage.png';
+import calendarIcon from '../assets/icons/navigation/calendar.png';
+import reportIcon from '../assets/icons/navigation/report.png';
 
 interface MobileFrameProps {
   children: React.ReactNode;
@@ -6,17 +13,48 @@ interface MobileFrameProps {
 
 const FRAME_WIDTH = 434;
 const FRAME_HEIGHT = 898;
-const FRAME_RADIUS = 45;
-const FRAME_BORDER = 5;
+const FRAME_RADIUS = 60;
+const FRAME_BORDER = 4;
 const SCREEN_WIDTH = FRAME_WIDTH - FRAME_BORDER * 2;
 const SCREEN_HEIGHT = FRAME_HEIGHT - FRAME_BORDER * 2;
-const SCREEN_RADIUS = 38;
+const SCREEN_RADIUS = 55;
 
 export default function MobileFrame({ children }: MobileFrameProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [time, setTime] = useState(() => {
     const now = new Date();
     return now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
   });
+
+  // NavigationBar를 표시할 페이지들
+  const pagesWithNavigation = ['/mypage', '/calendar'];
+  const showNavigation = pagesWithNavigation.includes(location.pathname);
+
+  // NavigationBar 탭 설정
+  const navigationTabs = [
+    {
+      id: 'my',
+      label: '마이',
+      path: '/mypage',
+      icon: mypageIcon
+    },
+    {
+      id: 'calendar',
+      label: '캘린더', 
+      path: '/calendar',
+      icon: calendarIcon
+    },
+    {
+      id: 'reports',
+      label: '리포트',
+      path: '/reports', 
+      icon: reportIcon
+    }
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,7 +74,7 @@ export default function MobileFrame({ children }: MobileFrameProps) {
         background: "#18181b",
         position: "relative",
         overflow: "hidden",
-        margin: "40px auto",
+        margin: "20px auto",
       }}
     >
       {/* 상단 바 */}
@@ -55,14 +93,21 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           pointerEvents: "none",
         }}
       >
-        {/* 현재 시간 */}
-        <span style={{ fontSize: 22, fontWeight: 500, color: "#222", marginLeft: 40 }}>{time}</span>
+        {/* 현재 시간 (클릭시 "/"경로로 이동*/}
+        <span style={{ 
+          fontSize: 20, 
+          fontWeight: 500, 
+          color: "#222", 
+          marginLeft: 50, 
+          pointerEvents: "auto", 
+        }} onClick={() => { navigate("/") }}>{time}</span>
         {/* 펀치홀 */}
         <div
           style={{
             position: "relative",
             width: 126,
             height: 37,
+            marginLeft: 24,
             background: "#000",
             borderRadius: 24,
             boxShadow: "0 0 0 2px rgba(0,0,0,0.6)",
@@ -94,10 +139,10 @@ export default function MobileFrame({ children }: MobileFrameProps) {
           </div>
         </div>
         {/* 네트워크/배터리 아이콘 */}
-        <div style={{ display: "flex", alignItems: "center", marginRight: 40, gap: 10 }}>
-          <img src="/icons/icon-signal.png" alt="신호" style={{ width: 20, height: 20 }} />
-          <img src="/icons/icon-wifi.png" alt="와이파이" style={{ width: 20, height: 20 }} />
-          <img src="/icons/icon-battery.png" alt="배터리" style={{ width: 20, height: 20 }} />
+        <div style={{ display: "flex", alignItems: "center", marginRight: 40, gap: 8 }}>
+          <img src="/icons/icon-signal1.png" alt="신호" style={{ width: 22, height: 22 }} />
+          <img src="/icons/icon-wifi1.png" alt="와이파이" style={{ width: 22, height: 22 }} />
+          <img src="/icons/icon-battery1.png" alt="배터리" style={{ width: 26, height: 26 }} />
         </div>
       </div>
       {/* 화면 영역 */}
@@ -115,11 +160,68 @@ export default function MobileFrame({ children }: MobileFrameProps) {
       >
         <div style={{ height: "100%", overflowY: "auto" }}>
           {children}
+          
+          {/* NavigationBar - 특정 페이지에서만 표시 */}
+          {showNavigation && (
+            <div style={{
+              position: 'absolute',
+              bottom: '0px',
+              left: '0',
+              right: '0',
+              height: '70px',
+              backgroundColor: COLORS.main,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              paddingBottom: '12px',
+              paddingTop: '4px',
+              borderTop: `1px solid ${COLORS.main}`,
+              borderRadius: '0 0 38px 38px',
+              zIndex: 0
+            }}>
+              {navigationTabs.map((tab) => (
+                <div
+                  key={tab.id}
+                  onClick={() => navigate(tab.path)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    padding: '8px 16px',
+                    borderRadius: '12px',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: isActive(tab.path) ? COLORS.main : 'transparent'
+                  }}
+                >
+                  <img 
+                    src={tab.icon}
+                    alt={tab.label}
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      marginBottom: '4px',
+                      filter: isActive(tab.path) ? 'none' : 'grayscale(0.5) opacity(0.7)',
+                      transition: 'filter 0.2s ease'
+                    }}
+                  />
+                  <span style={{
+                    fontSize: '15px',
+                    fontWeight: isActive(tab.path) ? '600' : '400',
+                    color: isActive(tab.path) ? COLORS.black : COLORS.gray
+                  }}>
+                    {tab.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          
           {/* 홈 인디케이터 */}
           <div
             style={{
               position: "absolute",
-              bottom: 10,
+              bottom: 6,
               left: "50%",
               transform: "translateX(-50%)",
               width: 150,

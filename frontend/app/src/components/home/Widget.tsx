@@ -16,11 +16,11 @@ const Widget: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '10px' }}>
+      {/* <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {weather.icon}
         <span style={{ fontSize: '2rem', fontWeight: 500 }}>{weather.temp}°</span>
-      </div>
+      </div> */}
       <div style={{ fontSize: '1rem', color: '#888', marginTop: '0.2rem' }}>
         {weather.city} 최고 {weather.high}° / 최저 {weather.low}°
       </div>

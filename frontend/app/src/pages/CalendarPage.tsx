@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { COLORS } from '../styles/colors';
 
@@ -70,12 +71,54 @@ const CalendarPage: React.FC = () => {
     });
   };
 
+  // AI 체크리스트 활성화 API 호출
+  const enableChecklist = async (scheduleId: number) => {
+    try {
+      console.log(`체크리스트 활성화 요청: ${scheduleId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/on-off`, {
+        enable: true
+      });
+      console.log('체크리스트 활성화 성공');
+      // 활성화 후 상세 정보 다시 가져오기
+      await fetchScheduleDetail(scheduleId);
+    } catch (error) {
+      console.error('체크리스트 활성화 실패:', error);
+    }
+  };
+
+  // 일정 삭제 API 호출
+  const deleteSchedule = async (scheduleId: number) => {
+    try {
+      console.log(`일정 삭제 요청: ${scheduleId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}`);
+      console.log('일정 삭제 성공');
+      // 삭제 후 일정 목록 다시 불러오기
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const response = await axios.get(`${API_BASE_URL}/calendars`, { params: { year, month } });
+      const scheduleData = response.data.scheduleListResponseDtoList || [];
+      setSchedules(scheduleData);
+    } catch (error) {
+      console.error('일정 삭제 실패:', error);
+    }
+  };
+
+  // 일정 삭제 확인 핸들러
+  const handleDeleteSchedule = (scheduleId: number, scheduleName: string) => {
+    if (window.confirm(`"${scheduleName}" 일정을 삭제하시겠습니까?`)) {
+      deleteSchedule(scheduleId);
+    }
+  };
+
   // AI 체크리스트 버튼 클릭 핸들러
-  const handleChecklistClick = (scheduleId: number) => {
+  const handleChecklistClick = async (scheduleId: number) => {
     const detail = scheduleDetails[scheduleId];
     if (detail && detail.scheduleIsChecklist) {
       setModalSchedule(detail);
       setShowModal(true);
+    } else {
+      // 체크리스트가 비활성화된 경우 활성화 요청
+      await enableChecklist(scheduleId);
     }
   };
 
@@ -242,7 +285,11 @@ const CalendarPage: React.FC = () => {
 
 
   return (
-    <div className="calendar-page" style={{ position: 'relative', maxHeight: '100vh' }}>
+    <div className="calendar-page" 
+      style={{ 
+      maxHeight: '100vh',
+      position: 'relative'
+    }}>
       <div>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
@@ -258,13 +305,13 @@ const CalendarPage: React.FC = () => {
         minHeight: '200px'
 }}>
         <div style={{ 
-          fontSize: '16px', 
+          fontSize: '20px', 
           fontWeight: '600', 
           marginBottom: '12px',
           color: COLORS.black
         }}>
-          {/* 선택된 날짜 표시 d. 요일 한글로 */}
-          {format(selectedDate, 'd. eeee')}
+          {/* 선택된 날짜 표시 d. 요일 한글로 한글자만*/}
+          {format(selectedDate, 'd. eee', { locale: ko })}
         </div>
         
         {selectedDateSchedules.length > 0 ? (
@@ -284,42 +331,97 @@ const CalendarPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                   <div 
                     style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
+                      width: '4px',
+                      height: '50px',
                       backgroundColor: schedule.scheduleColor || COLORS.main,
                       marginRight: '12px',
-                      flexShrink: 0
+                      flexShrink: 0,
                     }}
                   />
-                  <span style={{ 
-                    fontSize: '15px', 
-                    color: COLORS.black,
-                    fontWeight: '500'
-                  }}>
-                    {schedule.scheduleName}
-                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ 
+                      fontSize: '16px', 
+                      color: COLORS.black,
+                      fontWeight: '600',
+                      lineHeight: '1.2',
+                      marginBottom: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}>
+                      <span>{schedule.scheduleName}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteSchedule(schedule.scheduleId, schedule.scheduleName);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: COLORS.gray,
+                          fontSize: '16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      color: '#666',
+                      fontWeight: '400',
+                      lineHeight: '1.2',
+                      marginLeft: '2px'
+                    }}>
+                      {(() => {
+                        const startDate = new Date(schedule.scheduleStartDate);
+                        const endDate = new Date(schedule.scheduleEndDate);
+                        
+                        // 같은 날인지 확인
+                        const isSameDay = startDate.toDateString() === endDate.toDateString();
+                        
+                        if (isSameDay) {
+                          // 같은 날이면 "m.d.요일" 형식
+                          return format(startDate, 'M.d.eee', { locale: ko });
+                        } else {
+                          // 다른 날이면 "m.d.요일 - m.d.요일" 형식
+                          return `${format(startDate, 'M.d.eee', { locale: ko })} - ${format(endDate, 'M.d.eee', { locale: ko })}`;
+                        }
+                      })()}
+                    </div>
+                  </div>
                 </div>
                 
-                {/* AI 체크리스트 보기 버튼 - 체크리스트가 있는 경우에만 표시 */}
-                {scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist && (
-                  <button
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: COLORS.accent,
-                      color: COLORS.white,
-                      border: 'none',
-                      borderRadius: '15px',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      fontWeight: '500'
-                    }}
-                    onClick={() => handleChecklistClick(schedule.scheduleId)}
-                  >
-                    AI 체크리스트 보기
-                  </button>
-                )}
+                {/* AI 체크리스트 보기 버튼 - 항상 표시 */}
+                <button
+                  style={{
+                    width: '143px',
+                    height: '35px',
+                    backgroundColor: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? COLORS.white 
+                      : '#F5F5F5',
+                    color: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? COLORS.sub 
+                      : COLORS.gray,
+                    border: scheduleDetails[schedule.scheduleId]?.scheduleIsChecklist 
+                      ? `1px solid ${COLORS.main}` 
+                      : '1px solid #E0E0E0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}
+                  onClick={() => handleChecklistClick(schedule.scheduleId)}
+                >
+                  AI 체크리스트 보기
+                </button>
               </div>
             ))}
           </div>
@@ -336,31 +438,6 @@ const CalendarPage: React.FC = () => {
         )}
       </div>
       
-      <button 
-        className="calendar-add-btn" 
-        onClick={() => navigate('/schedule-register')} 
-        aria-label="일정 등록"
-        style={{ 
-          position: 'absolute', 
-          right: 20, 
-          bottom: 0, 
-          width: 64, 
-          height: 64, 
-          borderRadius: '50%', 
-          background: COLORS.main, 
-          color: COLORS.white, 
-          fontSize: 38, 
-          border: 'none', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          cursor: 'pointer',
-          zIndex: 1000
-        }}
-      >
-        +
-      </button>
-
       {/* AI 체크리스트 모달 */}
       {showModal && modalSchedule && (
         <div 
@@ -492,6 +569,31 @@ const CalendarPage: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* 일정추가 버튼 - 페이지 내부 고정 위치 */}
+      <button 
+        className="calendar-add-btn" 
+        onClick={() => navigate('/schedule-register')} 
+        aria-label="일정 등록"
+        style={{ 
+          position: 'absolute', 
+          right: 10, 
+          bottom: -50,
+          width: 72, 
+          height: 72, 
+          borderRadius: '50%', 
+          background: COLORS.sub, 
+          color: COLORS.white, 
+          fontSize: 50, 
+          border: 'none', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          cursor: 'pointer',
+        }}
+      >
+        +
+      </button>
     </div>
   );
 };
