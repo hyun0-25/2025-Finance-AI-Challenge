@@ -46,17 +46,32 @@ export default function ReportContent2({ activities }: ReportContent2Props) {
         </div>
       ))}
       {/* 아래쪽 화살표 */}
-        <svg width="50" height="50" viewBox="0 0 36 36">
-          <path
-            d="M10 15l8 8 8-8"
-            stroke="#c3c3c3"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            
-          />
-        </svg>
+      <button
+        onClick={() => {
+          const cardRecommendSection = document.getElementById('card-recommend-section');
+          if (cardRecommendSection) {
+            cardRecommendSection.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start' 
+            });
+          }
+        }}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
+      >
+        <img 
+          src="/src/assets/icons/under.png" 
+          alt="아래쪽 화살표" 
+          style={{ 
+            width: '28px', 
+            height: '16px' 
+          }} 
+        />
+      </button>
     </div>
   );
 }

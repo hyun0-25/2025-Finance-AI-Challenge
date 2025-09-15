@@ -22,7 +22,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
   return (
     <div style={{ textAlign: "left", padding: "0 20px" }}>
       {/* 상단 바 */}
-      <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #eee', marginTop: 60 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 60 }}>
         <button 
           onClick={() => navigate('/calendar')} 
           style={{ 
@@ -97,6 +97,7 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
           />
         </div>
       ))}
+      <div style={{ height: 20 }}></div>
     </div>
   );
 }
