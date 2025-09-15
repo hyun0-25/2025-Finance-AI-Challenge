@@ -2,7 +2,7 @@ import Clock from '../components/home/Clock';
 import Widget from '../components/home/Widget';
 import Notification from '../components/home/Notification';
 
-const bgUrl = '/bg.jpg';
+const bgUrl = '/bg.png';
 
 export default function HomePage() {
   return (

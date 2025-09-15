@@ -63,7 +63,7 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <div style={{ marginTop: '32px' }}>
+    <div style={{ marginTop: '16px' }}>
       <div style={{ 
         fontWeight: 'bold', 
         fontSize: '18px', 

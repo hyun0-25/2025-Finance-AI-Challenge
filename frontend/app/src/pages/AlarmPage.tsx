@@ -93,9 +93,9 @@ export default function AlarmPage() {
             <div 
               key={notification.notificationId} 
               onClick={() => {
-                // 첫 번째 알림을 클릭하면 /reports 페이지로 이동
+                // 첫 번째 알림을 클릭하면 /calendar 페이지로 이동
                 if (idx === 0) {
-                  navigate('/reports');
+                  navigate('/calendar');
                 }
               }}
               onMouseEnter={() => setHoverIdx(idx)}
@@ -110,16 +110,14 @@ export default function AlarmPage() {
                 transition: 'background 0.2s ease'
               }}
             >
-              <div style={{ fontWeight: 600, fontSize: 16 }}>{notification.title} </div>
-              <div style={{ color: '#222', fontSize: 15, margin: '6px 0' }}>{notification.body}</div>
-              <div style={{ color: '#888', fontSize: 13 }}>
-              </div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{notification.title} </div>
+              <div style={{ color: '#222', fontSize: 12, margin: '6px 0' }}>{notification.body}</div>
             </div>
           ))
         )}
       </div>
       {/* 광고 섹션 */}
-      <div style={{ padding: '32px 20px 0 20px' }}>
+      {/* <div style={{ padding: '32px 20px 60px 20px' }}>
         <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 16 }}>광고</div>
         <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.08)', padding: 20, marginBottom: 24, position: 'relative' }}>
           <span style={{ position: 'absolute', left: 16, top: 16, fontSize: 22, color: '#339DFF' }}>📢</span>
@@ -129,7 +127,7 @@ export default function AlarmPage() {
           </div>
           <div style={{ color: '#888', fontSize: 13, marginLeft: 32, marginTop: 8 }}>9월 5일</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
