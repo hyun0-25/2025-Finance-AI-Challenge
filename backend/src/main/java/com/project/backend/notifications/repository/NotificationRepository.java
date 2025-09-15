@@ -10,6 +10,6 @@ import java.util.UUID;
 
 public interface NotificationRepository extends JpaRepository<UserNotification, Long> {
 
-    @Query("SELECT n FROM UserNotification n WHERE n.user.userId = :user_id AND n.isDeleted = false")
-    List<UserNotification> findByUserUUIDAndIsDeleted(@Param("user_id") UUID userId);
+    @Query("SELECT n FROM UserNotification n WHERE n.user.userId = :user_id AND n.isDeleted = false ORDER BY n.notificationSendDate DESC ")
+    List<UserNotification> findByUserUUIDAndIsDeletedOrderByNotificationSendDateDesc(@Param("user_id") UUID userId);
 }

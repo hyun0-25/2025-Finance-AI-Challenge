@@ -82,7 +82,7 @@ public class NotificationService {
 
     public List<NotificationResponseDto> getNotifications(){
         log.info("{ NotificationService } : notification 리스트 조회");
-        List<UserNotification> userNotifications = notificationRepository.findByUserUUIDAndIsDeleted(userId);
+        List<UserNotification> userNotifications = notificationRepository.findByUserUUIDAndIsDeletedOrderByNotificationSendDateDesc(userId);
         List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
         for(UserNotification notification: userNotifications){
             notificationResponseDtoList.add(NotificationResponseDto.fromNotification(notification));
