@@ -561,7 +561,8 @@ const CalendarPage: React.FC = () => {
               }}
               onClick={() => {
                 console.log('AI 기능 추천 실행');
-                // 여기에 AI 기능 추천 로직 추가
+                closeModal();
+                navigate('/ai-card');
               }}
             >
               AI 카드 추천 받기

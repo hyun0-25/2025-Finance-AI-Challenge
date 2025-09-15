@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import ReportsPage from "./pages/ReportsPage";
 import CardRecommendPage from "./pages/CardRecommendPage";
 import CardDetailPage from "./pages/CardDetailPage";
+import AiCardRecommendPage from "./pages/AiCardRecommendPage";
 import AlarmPage from "./pages/AlarmPage";
 import CalendarPage from "./pages/CalendarPage";
 import ScheduleRegisterPage from "./pages/ScheduleRegisterPage";
@@ -19,6 +20,7 @@ function App() {
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/card-recommend" element={<CardRecommendPage />} />
           <Route path="/card-detail/:cardName" element={<CardDetailPage />} />
+          <Route path="/ai-card" element={<AiCardRecommendPage />} />
           <Route path="/alarm" element={<AlarmPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
