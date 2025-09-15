@@ -287,23 +287,27 @@ const CalendarPage: React.FC = () => {
   return (
     <div className="calendar-page" 
       style={{ 
-      maxHeight: '100vh',
-      position: 'relative'
+      height: '100vh',
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
-      <div>
+      {/* 달력 부분 */}
+      <div style={{ flex: '0 0 auto' }}>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
         <div className="calendar-grid">{renderCells()}</div>
       </div>
       
-      {/* 선택된 날짜의 일정 목록 */}
+      {/* 선택된 날짜의 일정 목록 - 남은 공간 차지 */}
       <div style={{ 
         padding: '15px 20px', 
         backgroundColor: '#fff', 
         borderTop: '1px solid #f0f0f0',
         position: 'relative',
-        minHeight: '200px'
-}}>
+        flex: '1 1 auto',
+        overflow: 'auto'
+      }}>
         <div style={{ 
           fontSize: '20px', 
           fontWeight: '600', 
@@ -571,15 +575,20 @@ const CalendarPage: React.FC = () => {
         </div>
       )}
       
-      {/* 일정추가 버튼 - 페이지 내부 고정 위치 */}
+      {/* 일정추가 버튼 - 컨테이너 내부 고정 */}
       <button 
         className="calendar-add-btn" 
-        onClick={() => navigate('/schedule-register')} 
+        onClick={() => {
+          console.log("selectedDate에 일정추가", selectedDate);
+          navigate('/schedule-register', { 
+            state: { selectedDate: selectedDate }
+          });
+        }} 
         aria-label="일정 등록"
         style={{ 
           position: 'absolute', 
-          right: 10, 
-          bottom: -50,
+          right: 20, 
+          bottom: 150,
           width: 72, 
           height: 72, 
           borderRadius: '50%', 
@@ -591,6 +600,7 @@ const CalendarPage: React.FC = () => {
           alignItems: 'center', 
           justifyContent: 'center', 
           cursor: 'pointer',
+          zIndex: 100
         }}
       >
         +
