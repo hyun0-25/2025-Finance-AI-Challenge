@@ -31,7 +31,8 @@ interface ScheduleDetail {
 
 interface ChecklistItem {
   checklistItemId: number;
-  checklistItemName: string;
+  checklistItemCategory: string;
+  checklistItemContent: string;
   checklistItemIsChecked: boolean;
 }
 
@@ -42,6 +43,7 @@ const CalendarPage: React.FC = () => {
   const [scheduleDetails, setScheduleDetails] = useState<{[key: number]: ScheduleDetail}>({});
   const [showModal, setShowModal] = useState(false);
   const [modalSchedule, setModalSchedule] = useState<ScheduleDetail | null>(null);
+  const [newChecklistItem, setNewChecklistItem] = useState('');
   const navigate = useNavigate();
 
   // 일정 상세 정보 가져오기
@@ -110,6 +112,37 @@ const CalendarPage: React.FC = () => {
     }
   };
 
+  // 체크리스트 항목 토글
+  const toggleChecklistItem = async (scheduleId: number, checklistItemId: number) => {
+    try {
+      console.log(`체크리스트 항목 토글 요청: scheduleId=${scheduleId}, checklistItemId=${checklistItemId}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/checklist/${checklistItemId}/on-off`);
+      console.log('체크리스트 항목 토글 성공');
+      // 토글 후 상세 정보 다시 가져오기
+      await fetchScheduleDetail(scheduleId);
+    } catch (error) {
+      console.error('체크리스트 항목 토글 실패:', error);
+    }
+  };
+
+  // 체크리스트 항목 추가
+  const addChecklistItem = async (scheduleId: number) => {
+    if (!newChecklistItem.trim()) return;
+    
+    try {
+      console.log(`체크리스트 항목 추가 요청: scheduleId=${scheduleId}, item=${newChecklistItem}`);
+      await axios.post(`${API_BASE_URL}/schedules/${scheduleId}/checklist`, {
+        checklistItemName: newChecklistItem
+      });
+      console.log('체크리스트 항목 추가 성공');
+      setNewChecklistItem('');
+      // 추가 후 상세 정보 다시 가져오기
+      await fetchScheduleDetail(scheduleId);
+    } catch (error) {
+      console.error('체크리스트 항목 추가 실패:', error);
+    }
+  };
+
   // AI 체크리스트 버튼 클릭 핸들러
   const handleChecklistClick = async (scheduleId: number) => {
     const detail = scheduleDetails[scheduleId];
@@ -126,6 +159,7 @@ const CalendarPage: React.FC = () => {
   const closeModal = () => {
     setShowModal(false);
     setModalSchedule(null);
+    setNewChecklistItem(''); // 입력 필드 초기화
   };
 
   useEffect(() => {
@@ -225,7 +259,7 @@ const CalendarPage: React.FC = () => {
               // 달력 높이
               minHeight: 60, 
               padding: '2px', 
-              background: isSelected ? COLORS.light : '#fff',
+              background: '#fff',
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center', 
@@ -238,7 +272,17 @@ const CalendarPage: React.FC = () => {
             }}
             onClick={() => handleDateClick(currentDay)}
           >
-            <div style={{width: 'auto', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{
+              width: 28, 
+              height: 28, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              borderRadius: '50%',
+              backgroundColor: isSelected ? COLORS.main : 'transparent',
+              color: isToday ? COLORS.accent : (isCurrentMonth ? (isSunday ? '#E74C3C' : '#222') : '#bbb'),
+              fontWeight: isToday ? 700 : 400
+            }}>
               {formattedDate}
             </div>
             {/* 일정 표시 - 시작일 기준 점으로만 표시 */}
@@ -446,8 +490,8 @@ const CalendarPage: React.FC = () => {
       {showModal && modalSchedule && (
         <div 
           style={{
-            position: 'fixed',
-            top: -200,
+            position: 'absolute',
+            top: 0,
             left: 0,
             right: 0,
             bottom: 0,
@@ -514,8 +558,13 @@ const CalendarPage: React.FC = () => {
               </button>
             </div>
 
-            {/* 체크리스트 항목들 */}
-            <div style={{ marginBottom: '20px' }}>
+            {/* 체크리스트 항목들 - 고정 높이로 스크롤 가능 */}
+            <div style={{ 
+              height: '250px', 
+              overflowY: 'auto',
+              marginBottom: '20px',
+              paddingRight: '4px'
+            }}>
               {modalSchedule.checklistItemResponseDtoList.map((item, index) => (
                 <div 
                   key={item.checklistItemId}
@@ -523,8 +572,10 @@ const CalendarPage: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     padding: '12px 0',
-                    borderBottom: index < modalSchedule.checklistItemResponseDtoList.length - 1 ? '1px solid #f0f0f0' : 'none'
+                    borderBottom: index < modalSchedule.checklistItemResponseDtoList.length - 1 ? '1px solid #f0f0f0' : 'none',
+                    cursor: 'pointer'
                   }}
+                  onClick={() => toggleChecklistItem(modalSchedule.scheduleId, item.checklistItemId)}
                 >
                   <div style={{
                     width: '20px',
@@ -544,10 +595,52 @@ const CalendarPage: React.FC = () => {
                     fontSize: '14px', 
                     color: item.checklistItemIsChecked ? COLORS.black : COLORS.gray,
                   }}>
-                    {item.checklistItemName}
+                    {item.checklistItemContent}
                   </span>
                 </div>
               ))}
+              
+              {/* 체크리스트 추가하기 입력 필드 */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '12px 0',
+                marginTop: '8px'
+              }}>
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <span style={{ color: COLORS.gray, fontSize: '18px', fontWeight: 'bold' }}>+</span>
+                </div>
+                <input
+                  type="text"
+                  value={newChecklistItem}
+                  onChange={(e) => setNewChecklistItem(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      addChecklistItem(modalSchedule.scheduleId);
+                    }
+                  }}
+                  placeholder="체크리스트 추가하기"
+                  style={{
+                    flex: 1,
+                    fontSize: '16px',
+                    color: COLORS.gray,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '8px',
+                    paddingTop: 4,
+                    border: 'none',
+                    outline: 'none',
+                    backgroundColor: 'transparent'
+                  }}
+                />
+              </div>
             </div>
 
             {/* AI 기능 추천 버튼 */}
