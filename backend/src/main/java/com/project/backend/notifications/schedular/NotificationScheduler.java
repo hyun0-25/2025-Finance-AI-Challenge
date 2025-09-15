@@ -1,9 +1,13 @@
 package com.project.backend.notifications.schedular;
 
 import com.project.backend.notifications.dto.request.FcmMessageRequestDto;
+import com.project.backend.notifications.dto.request.NotificationMessageRequestDto;
+import com.project.backend.notifications.dto.response.NotificationMessageResponseDto;
 import com.project.backend.notifications.service.NotificationService;
 import com.project.backend.schedules.domain.Schedule;
 import com.project.backend.schedules.domain.ScheduleFrequencyType;
+import com.project.backend.schedules.dto.request.ScheduleNameReqeustDto;
+import com.project.backend.schedules.dto.response.ChecklistResponseDto;
 import com.project.backend.schedules.repository.ScheduleRepository;
 import com.project.backend.users.domain.User;
 import com.project.backend.users.repository.UserRepository;
@@ -12,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +29,8 @@ import java.util.UUID;
 public class NotificationScheduler {
     @Value("${TEST_USER_UUID}")
     private UUID userId;
-
+    @Value("${FASTAPI_SERVER_URL}")
+    private String fastApiServerURL;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
@@ -50,11 +56,15 @@ public class NotificationScheduler {
 
     public FcmMessageRequestDto toMessage(Schedule schedule) {
         //AI 서버로 부터 받은 응답
-//        String title = "";
-//        String body = "";
-        String title = schedule.getScheduleId() + " : 스케줄 id";
-        String body = schedule.getScheduleName();
+        log.info("{ NotificationScheduler } : notification Message 생성 시작");
 
+        RestTemplate restTemplate = new RestTemplate();
+        String url = fastApiServerURL + "/notification";
+        NotificationMessageRequestDto notificationMessageRequestDto = new NotificationMessageRequestDto(schedule.getScheduleName());
+        NotificationMessageResponseDto notificationMessageResponseDto = restTemplate.postForObject(url, notificationMessageRequestDto, NotificationMessageResponseDto.class);
+        String title = notificationMessageResponseDto.notificationTitle();
+        String body = notificationMessageResponseDto.notificationContent();
+        log.info("{ NotificationScheduler } : notification Message 생성 종료");
         return FcmMessageRequestDto.toFcmMessage(schedule.getUser().getUserId(), schedule.getScheduleId(), title, body);
     }
 
