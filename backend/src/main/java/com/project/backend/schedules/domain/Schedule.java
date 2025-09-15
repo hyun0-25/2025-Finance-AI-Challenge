@@ -1,6 +1,7 @@
 package com.project.backend.schedules.domain;
 
 import com.project.backend.cards.domain.Card;
+import com.project.backend.cards.domain.CardRecommend;
 import com.project.backend.global.BaseEntity;
 import com.project.backend.notifications.domain.UserNotification;
 import com.project.backend.users.domain.User;
@@ -31,6 +32,9 @@ public class Schedule extends BaseEntity {
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItem> checklistItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CardRecommend> cardRecommends = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalDateTime scheduleStartDate;

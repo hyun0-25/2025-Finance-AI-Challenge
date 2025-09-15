@@ -1,5 +1,7 @@
 package com.project.backend.schedules.controller;
 
+import com.project.backend.cards.dto.response.CardRecommendResponseDto;
+import com.project.backend.cards.service.CardService;
 import com.project.backend.schedules.domain.ChecklistItem;
 import com.project.backend.schedules.dto.request.ChecklistItemIsCheckedRequestDto;
 import com.project.backend.schedules.dto.request.ChecklistItemRequestDto;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/schedules")
 public class ScheduleController {
     private final ScheduleService scheduleService;
+    private final CardService cardService;
     private final ChecklistItemService checklistItemService;
 
     @PostMapping
@@ -99,5 +102,13 @@ public class ScheduleController {
         checklistItemService.updateChecklistItemIsChecked(scheduleId, checklistItemId, checklistItemIsCheckedRequestDto);
         log.info("{ ScheduleController } : ChecklistItem IsChecked 변경 성공");
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{scheduleId}/recommend")
+    public ResponseEntity<CardRecommendResponseDto> createCardRecommend(@PathVariable Long scheduleId) {
+        log.info("{ ScheduleController } : CardRecommend 생성 진입");
+        CardRecommendResponseDto cardRecommendResponseDto = cardService.createCardRecommend(scheduleId);
+        log.info("{ ScheduleController } : CardRecommend 생성 성공");
+        return ResponseEntity.status(HttpStatus.CREATED).body(cardRecommendResponseDto);
     }
 }
