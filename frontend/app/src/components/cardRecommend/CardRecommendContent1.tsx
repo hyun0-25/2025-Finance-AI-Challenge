@@ -24,8 +24,9 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
     <div style={{ textAlign: "left", padding: "0 20px" }}>
       {/* 상단 바 */}
       <div style={{ display: 'flex', alignItems: 'center', marginTop: 60 }}>
-        <button 
-          onClick={() => navigate('/reports')} 
+        <button
+          // 뒤로 -1
+          onClick={() => navigate(-1)} 
           style={{ 
             background: 'none', 
             border: 'none',

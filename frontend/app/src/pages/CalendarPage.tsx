@@ -44,6 +44,7 @@ const CalendarPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalSchedule, setModalSchedule] = useState<ScheduleDetail | null>(null);
   const [newChecklistItem, setNewChecklistItem] = useState('');
+  const [isLoadingSchedules, setIsLoadingSchedules] = useState(true); // 일정 로딩 상태 추가
   const navigate = useNavigate();
 
   // 일정 상세 정보 가져오기
@@ -123,6 +124,38 @@ const CalendarPage: React.FC = () => {
     );
     if (!currentItem) return;
     
+    // 임시 ID인지 확인 (새로 추가된 항목인지)
+    const isTempId = checklistItemId > 1000000000000; // Date.now()로 생성된 임시 ID
+    if (isTempId) {
+      // 임시 ID인 경우 토글만 하고 API 요청은 하지 않음
+      const newCheckedState = !currentItem.checklistItemIsChecked;
+      
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: {
+          ...prev[scheduleId],
+          checklistItemResponseDtoList: prev[scheduleId].checklistItemResponseDtoList.map(item =>
+            item.checklistItemId === checklistItemId
+              ? { ...item, checklistItemIsChecked: newCheckedState }
+              : item
+          )
+        }
+      }));
+      
+      // 모달이 열려있다면 모달 데이터도 즉시 업데이트
+      if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+        setModalSchedule(prev => prev ? {
+          ...prev,
+          checklistItemResponseDtoList: prev.checklistItemResponseDtoList.map(item =>
+            item.checklistItemId === checklistItemId
+              ? { ...item, checklistItemIsChecked: newCheckedState }
+              : item
+          )
+        } : null);
+      }
+      return;
+    }
+    
     const newCheckedState = !currentItem.checklistItemIsChecked;
     
     // 1. 즉시 UI 업데이트 (낙관적 업데이트)
@@ -193,30 +226,165 @@ const CalendarPage: React.FC = () => {
   const addChecklistItem = async (scheduleId: number) => {
     if (!newChecklistItem.trim()) return;
     
+    const tempId = Date.now(); // 임시 ID
+    const newItem = {
+      checklistItemId: tempId,
+      checklistItemCategory: "",
+      checklistItemContent: newChecklistItem.trim(),
+      checklistItemIsChecked: false
+    };
+    
+    // 1. 즉시 UI 업데이트 (낙관적 업데이트)
+    setScheduleDetails(prev => ({
+      ...prev,
+      [scheduleId]: {
+        ...prev[scheduleId],
+        checklistItemResponseDtoList: [
+          ...prev[scheduleId].checklistItemResponseDtoList,
+          newItem
+        ]
+      }
+    }));
+    
+    // 모달이 열려있다면 모달 데이터도 즉시 업데이트
+    if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+      setModalSchedule(prev => prev ? {
+        ...prev,
+        checklistItemResponseDtoList: [
+          ...prev.checklistItemResponseDtoList,
+          newItem
+        ]
+      } : null);
+    }
+    
+    // 입력 필드 즉시 초기화
+    setNewChecklistItem('');
+    
+    // 2. API 요청
     try {
-      console.log(`체크리스트 항목 추가 요청: scheduleId=${scheduleId}, item=${newChecklistItem}`);
+      console.log(`체크리스트 항목 추가 요청: scheduleId=${scheduleId}, item=${newItem.checklistItemContent}`);
       await axios.post(`${API_BASE_URL}/schedules/${scheduleId}/checklist`, {
-        checklistItemContent: newChecklistItem
+        checklistItemContent: newItem.checklistItemContent
       });
       console.log('체크리스트 항목 추가 성공');
-      setNewChecklistItem('');
-      // 추가 후 상세 정보 다시 가져오기
-      await fetchScheduleDetail(scheduleId);
+      
+      // 3. 추가 성공 후 상세 정보 다시 가져와서 실제 ID로 업데이트
+      const response = await axios.get(`${API_BASE_URL}/schedules/${scheduleId}`);
+      const updatedDetail = response.data;
+      
+      // scheduleDetails 업데이트
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: updatedDetail
+      }));
+      
+      // 모달이 열려있다면 모달 데이터도 업데이트
+      if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+        setModalSchedule(updatedDetail);
+      }
     } catch (error) {
       console.error('체크리스트 항목 추가 실패:', error);
+      
+      // 4. 실패 시 추가된 항목 제거
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: {
+          ...prev[scheduleId],
+          checklistItemResponseDtoList: prev[scheduleId].checklistItemResponseDtoList.filter(
+            item => item.checklistItemId !== tempId
+          )
+        }
+      }));
+      
+      // 모달 데이터도 되돌리기
+      if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+        setModalSchedule(prev => prev ? {
+          ...prev,
+          checklistItemResponseDtoList: prev.checklistItemResponseDtoList.filter(
+            item => item.checklistItemId !== tempId
+          )
+        } : null);
+      }
+      
+      // 입력 필드에 내용 복원
+      setNewChecklistItem(newItem.checklistItemContent);
+      alert('체크리스트 항목 추가에 실패했습니다.');
     }
   };
 
   // 체크리스트 항목 삭제
   const deleteChecklistItem = async (scheduleId: number, checklistItemId: number) => {
+    // 삭제할 항목 찾기 (실패 시 복원용)
+    const currentDetail = scheduleDetails[scheduleId];
+    if (!currentDetail) return;
+    
+    const itemToDelete = currentDetail.checklistItemResponseDtoList.find(
+      item => item.checklistItemId === checklistItemId
+    );
+    if (!itemToDelete) return;
+    
+    // 임시 ID인지 확인 (새로 추가된 항목인지)
+    const isTempId = checklistItemId > 1000000000000; // Date.now()로 생성된 임시 ID
+    
+    // 1. 즉시 UI에서 제거 (낙관적 업데이트)
+    setScheduleDetails(prev => ({
+      ...prev,
+      [scheduleId]: {
+        ...prev[scheduleId],
+        checklistItemResponseDtoList: prev[scheduleId].checklistItemResponseDtoList.filter(
+          item => item.checklistItemId !== checklistItemId
+        )
+      }
+    }));
+    
+    // 모달이 열려있다면 모달 데이터도 즉시 업데이트
+    if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+      setModalSchedule(prev => prev ? {
+        ...prev,
+        checklistItemResponseDtoList: prev.checklistItemResponseDtoList.filter(
+          item => item.checklistItemId !== checklistItemId
+        )
+      } : null);
+    }
+    
+    // 임시 ID인 경우 API 요청 없이 종료
+    if (isTempId) {
+      console.log('임시 항목 삭제 완료 (서버 요청 없음)');
+      return;
+    }
+    
+    // 2. API 요청 (실제 ID가 있는 경우만)
     try {
       console.log(`체크리스트 항목 삭제 요청: scheduleId=${scheduleId}, checklistItemId=${checklistItemId}`);
       await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/checklist/${checklistItemId}`);
       console.log('체크리스트 항목 삭제 성공');
-      // 삭제 후 상세 정보 다시 가져오기
-      await fetchScheduleDetail(scheduleId);
     } catch (error) {
       console.error('체크리스트 항목 삭제 실패:', error);
+      
+      // 3. 실패 시 삭제된 항목 복원
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: {
+          ...prev[scheduleId],
+          checklistItemResponseDtoList: [
+            ...prev[scheduleId].checklistItemResponseDtoList,
+            itemToDelete
+          ]
+        }
+      }));
+      
+      // 모달 데이터도 복원
+      if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+        setModalSchedule(prev => prev ? {
+          ...prev,
+          checklistItemResponseDtoList: [
+            ...prev.checklistItemResponseDtoList,
+            itemToDelete
+          ]
+        } : null);
+      }
+      
+      alert('체크리스트 항목 삭제에 실패했습니다.');
     }
   };
 
@@ -243,16 +411,38 @@ const CalendarPage: React.FC = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1; // API에서 월은 1부터 시작
     console.log(`API 요청: ${year}년 ${month}월 일정 조회`);
+    setIsLoadingSchedules(true); // 로딩 시작
     axios.get(`${API_BASE_URL}/calendars`, { params: { year, month } })
       .then(res => {
         const scheduleData = res.data.scheduleListResponseDtoList || [];
         console.log('API 응답 데이터:', scheduleData);
         setSchedules(scheduleData);
+        setIsLoadingSchedules(false); // 로딩 완료
+        
+        // 일정 로딩 완료 후 선택된 날짜(오늘)의 일정 상세 정보도 요청
+        const selectedDateSchedules = scheduleData.filter((schedule: Schedule) => {
+          const startDate = new Date(parseISO(schedule.scheduleStartDate));
+          startDate.setHours(0, 0, 0, 0);
+          
+          const endDate = new Date(parseISO(schedule.scheduleEndDate));
+          endDate.setHours(23, 59, 59, 999);
+          
+          const compareDate = new Date(selectedDate);
+          compareDate.setHours(12, 0, 0, 0);
+          
+          return compareDate >= startDate && compareDate <= endDate;
+        });
+        
+        // 선택된 날짜의 일정들에 대해 상세 정보 요청
+        selectedDateSchedules.forEach((schedule: Schedule) => {
+          fetchScheduleDetail(schedule.scheduleId);
+        });
       })
       .catch(err => {
         console.error('일정 조회 실패:', err);
+        setIsLoadingSchedules(false); // 로딩 완료 (실패해도)
       });
-  }, [currentDate]);
+  }, [currentDate, selectedDate]); // selectedDate도 의존성에 추가
 
   // 특정 날짜에서 시작하는 일정만 가져오기 (막대 표시용)
   const getSchedulesStartingOnDate = (date: Date) => {
@@ -417,7 +607,47 @@ const CalendarPage: React.FC = () => {
       <div style={{ flex: '0 0 auto' }}>
         <div className="calendar-header">{renderHeader()}</div>
         <div className="calendar-days">{renderDays()}</div>
-        <div className="calendar-grid">{renderCells()}</div>
+        <div className="calendar-grid">
+          {isLoadingSchedules ? (
+            // 로딩 스피너
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '330px', // 캘린더 그리드 높이만큼
+              backgroundColor: '#fff'
+            }}>
+              <div style={{
+                width: '30px',
+                height: '30px',
+                border: `3px solid #f3f3f3`,
+                borderTop: `3px solid ${COLORS.main}`,
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              
+              <div style={{
+                marginTop: 12,
+                fontSize: 14,
+                color: COLORS.black,
+                fontWeight: 500
+              }}>
+                일정을 불러오는 중...
+              </div>
+
+              {/* CSS 애니메이션 */}
+              <style>{`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}</style>
+            </div>
+          ) : (
+            renderCells()
+          )}
+        </div>
       </div>
       
       {/* 선택된 날짜의 일정 목록 - 남은 공간 차지 */}

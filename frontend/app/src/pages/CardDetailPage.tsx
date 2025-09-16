@@ -106,7 +106,8 @@ export default function CardDetailPage() {
       {/* 상단 바 */}
       <div style={{ display: 'flex', alignItems: 'center', marginTop: 60, marginLeft: 20 }}>
         <button 
-          onClick={() => navigate('/card-recommend')} 
+        // 뒤로 -1
+          onClick={() => navigate(-1)} 
           style={{ 
             background: 'none', 
             border: 'none',

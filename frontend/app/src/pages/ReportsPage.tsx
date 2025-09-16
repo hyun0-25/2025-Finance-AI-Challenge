@@ -46,6 +46,7 @@ export default function ReportsPage() {
 
   return (
     <div style={{ paddingTop: "54px", textAlign: "center", maxHeight: "100vh" }}>
+      
       <ReportContent1 {...reportData1} />
       <ReportContent2 activities={reportData2} />
       
