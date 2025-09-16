@@ -43,7 +43,7 @@ const AiCardRecommendPage: React.FC = () => {
         
         return {
           img: `/src/assets/cards/${card.cardId}.png`,
-          name: name,
+          name: name.replace(/신한/g, 'T끌'),
           tags: tags,
           cardId: card.cardId // 카드 ID 추가
         };

@@ -155,7 +155,7 @@ const MyPage: React.FC = () => {
 
       {/* 메인 컨텐츠 영역 */}
       <div style={{ 
-        height: 'calc(100vh - 120px)', // 헤더 및 NavigationBar 높이 제외
+        height: 'calc(100vh - 180px)', // 헤더 및 NavigationBar 높이 제외
         padding: '0 20px',
       }}>
         <h2 style={{
@@ -301,7 +301,7 @@ const MyPage: React.FC = () => {
                         color: COLORS.black,
                         margin: '0 0 4px 0'
                       }}>
-                        {detail?.cardName || (
+                        {detail?.cardName?.replace(/신한/g, 'T끌') || (
                           <span style={{ color: COLORS.gray }}>카드 정보 로딩 중...</span>
                         )}
                       </h3>

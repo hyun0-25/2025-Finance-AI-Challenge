@@ -169,13 +169,13 @@ export default function MobileFrame({ children }: MobileFrameProps) {
               left: '0',
               right: '0',
               height: '70px',
-              backgroundColor: COLORS.main,
+              backgroundColor: COLORS.white,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-around',
               paddingBottom: '12px',
               paddingTop: '4px',
-              borderTop: `1px solid ${COLORS.main}`,
+              borderTop: `2px solid ${COLORS.gray}`,
               borderRadius: '0 0 38px 38px',
               zIndex: 0
             }}>
@@ -191,24 +191,51 @@ export default function MobileFrame({ children }: MobileFrameProps) {
                     padding: '8px 16px',
                     borderRadius: '12px',
                     transition: 'all 0.2s ease',
-                    backgroundColor: isActive(tab.path) ? COLORS.main : 'transparent'
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    const img = e.currentTarget.querySelector('img') as HTMLImageElement;
+                    const span = e.currentTarget.querySelector('span') as HTMLSpanElement;
+                    if (img && !isActive(tab.path)) {
+                      img.style.width = '30px';
+                      img.style.height = '30px';
+                      img.style.filter = 'brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)';
+                    }
+                    if (span && !isActive(tab.path)) {
+                      span.style.color = COLORS.black;
+                      span.style.fontWeight = '600';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const img = e.currentTarget.querySelector('img') as HTMLImageElement;
+                    const span = e.currentTarget.querySelector('span') as HTMLSpanElement;
+                    if (img && !isActive(tab.path)) {
+                      img.style.width = '30px';
+                      img.style.height = '30px';
+                      img.style.filter = 'grayscale(0.5) opacity(0.7)';
+                    }
+                    if (span && !isActive(tab.path)) {
+                      span.style.color = COLORS.gray;
+                      span.style.fontWeight = '400';
+                    }
                   }}
                 >
                   <img 
                     src={tab.icon}
                     alt={tab.label}
                     style={{
-                      width: '30px',
-                      height: '30px',
+                      width: isActive(tab.path) ? '32px' : '30px',
+                      height: isActive(tab.path) ? '32px' : '30px',
                       marginBottom: '4px',
-                      filter: isActive(tab.path) ? 'none' : 'grayscale(0.5) opacity(0.7)',
-                      transition: 'filter 0.2s ease'
+                      filter: isActive(tab.path) 
+                        ? 'brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)' 
+                        : 'grayscale(0.5) opacity(0.7)',
                     }}
                   />
                   <span style={{
                     fontSize: '15px',
                     fontWeight: isActive(tab.path) ? '600' : '400',
-                    color: isActive(tab.path) ? COLORS.black : COLORS.gray
+                    color: isActive(tab.path) ? COLORS.black : COLORS.gray,
                   }}>
                     {tab.label}
                   </span>
