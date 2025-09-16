@@ -262,9 +262,10 @@ const ScheduleRegisterPage: React.FC = () => {
         return `${hour24.toString().padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
       };
 
-      // API 전송용 데이터 준비
+      // API 전송용 데이터 준비 (scheduleIsChecklist는 일단 false로 보냄)
       const apiData = {
         ...form,
+        scheduleIsChecklist: false, // 일단 false로 보내기
         // 하루종일인 경우 시작시간은 00:00:00, 종료시간은 23:59:59로 설정
         scheduleStartDate: allDay 
           ? `${form.scheduleStartDate.split('T')[0]}T00:00:00`
@@ -276,7 +277,18 @@ const ScheduleRegisterPage: React.FC = () => {
       };
       
       console.log('전송 데이터:', apiData);
-      await axios.post(`${API_BASE_URL}/schedules`, apiData);
+      const response = await axios.post(`${API_BASE_URL}/schedules`, apiData);
+      
+      // 체크리스트가 활성화되어 있다면 추가 요청
+      if (form.scheduleIsChecklist) {
+        const scheduleId = response.data.scheduleId || response.data.id; // API 응답 구조에 따라 조정
+        console.log('체크리스트 활성화 요청 - scheduleId:', scheduleId);
+        await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/on-off`, {
+          enable: true
+        });
+        console.log('체크리스트 활성화 완료');
+      }
+      
       navigate('/calendar');
     } catch (err) {
       console.error('등록 실패:', err);
