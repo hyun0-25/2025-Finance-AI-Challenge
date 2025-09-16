@@ -791,9 +791,11 @@ const CalendarPage: React.FC = () => {
                 cursor: 'pointer'
               }}
               onClick={() => {
-                console.log('AI 기능 추천 실행');
+                console.log('AI 기능 추천 실행 - scheduleId:', modalSchedule.scheduleId);
                 closeModal();
-                navigate('/ai-card');
+                navigate('/ai-card', { 
+                  state: { scheduleId: modalSchedule.scheduleId }
+                });
               }}
             >
               AI 카드 추천 받기
