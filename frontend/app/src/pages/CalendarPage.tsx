@@ -112,16 +112,80 @@ const CalendarPage: React.FC = () => {
     }
   };
 
-  // 체크리스트 항목 토글
+  // 체크리스트 항목 토글 (낙관적 업데이트)
   const toggleChecklistItem = async (scheduleId: number, checklistItemId: number) => {
+    // 현재 체크 상태 찾기
+    const currentDetail = scheduleDetails[scheduleId];
+    if (!currentDetail) return;
+    
+    const currentItem = currentDetail.checklistItemResponseDtoList.find(
+      item => item.checklistItemId === checklistItemId
+    );
+    if (!currentItem) return;
+    
+    const newCheckedState = !currentItem.checklistItemIsChecked;
+    
+    // 1. 즉시 UI 업데이트 (낙관적 업데이트)
+    setScheduleDetails(prev => ({
+      ...prev,
+      [scheduleId]: {
+        ...prev[scheduleId],
+        checklistItemResponseDtoList: prev[scheduleId].checklistItemResponseDtoList.map(item =>
+          item.checklistItemId === checklistItemId
+            ? { ...item, checklistItemIsChecked: newCheckedState }
+            : item
+        )
+      }
+    }));
+    
+    // 모달이 열려있다면 모달 데이터도 즉시 업데이트
+    if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+      setModalSchedule(prev => prev ? {
+        ...prev,
+        checklistItemResponseDtoList: prev.checklistItemResponseDtoList.map(item =>
+          item.checklistItemId === checklistItemId
+            ? { ...item, checklistItemIsChecked: newCheckedState }
+            : item
+        )
+      } : null);
+    }
+    
+    // 2. API 요청
     try {
-      console.log(`체크리스트 항목 토글 요청: scheduleId=${scheduleId}, checklistItemId=${checklistItemId}`);
-      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/checklist/${checklistItemId}/on-off`);
+      console.log(`체크리스트 항목 토글 요청: scheduleId=${scheduleId}, checklistItemId=${checklistItemId}, newState=${newCheckedState}`);
+      await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/checklist/${checklistItemId}/on-off`,{
+        isChecked: newCheckedState
+      });
       console.log('체크리스트 항목 토글 성공');
-      // 토글 후 상세 정보 다시 가져오기
-      await fetchScheduleDetail(scheduleId);
     } catch (error) {
       console.error('체크리스트 항목 토글 실패:', error);
+      
+      // 3. 실패 시 원래 상태로 되돌리기
+      setScheduleDetails(prev => ({
+        ...prev,
+        [scheduleId]: {
+          ...prev[scheduleId],
+          checklistItemResponseDtoList: prev[scheduleId].checklistItemResponseDtoList.map(item =>
+            item.checklistItemId === checklistItemId
+              ? { ...item, checklistItemIsChecked: !newCheckedState } // 원래 상태로 되돌림
+              : item
+          )
+        }
+      }));
+      
+      // 모달 데이터도 되돌리기
+      if (modalSchedule && modalSchedule.scheduleId === scheduleId) {
+        setModalSchedule(prev => prev ? {
+          ...prev,
+          checklistItemResponseDtoList: prev.checklistItemResponseDtoList.map(item =>
+            item.checklistItemId === checklistItemId
+              ? { ...item, checklistItemIsChecked: !newCheckedState }
+              : item
+          )
+        } : null);
+      }
+      
+      alert('체크리스트 업데이트에 실패했습니다.');
     }
   };
 
