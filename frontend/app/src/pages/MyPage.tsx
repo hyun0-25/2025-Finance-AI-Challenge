@@ -275,7 +275,11 @@ const MyPage: React.FC = () => {
 
                     }}>
                       <img
-                        src="/card-img.png"
+                        src={
+                          card.cardId === 3? "/src/assets/cards/3.png" :
+                          card.cardId === 2 ? "/src/assets/cards/2.png" :
+                          "/card-img.png"
+                        }
                         alt="카드 이미지"
                         style={{
                           width: '100%',

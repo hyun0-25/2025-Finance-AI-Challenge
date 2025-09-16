@@ -8,6 +8,7 @@ interface CardRecommendData {
   recommendCount: number;
   benefit: string;
   medal: string; // 🥇, 🥈, 🥉
+  cardId?: number; // 카드 ID 추가
 }
 
 interface CardRecommendContent1Props {
@@ -64,7 +65,21 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
             marginBottom: 20,
             cursor: "pointer",
           }}
-          onClick={() => navigate(`/card-detail/${encodeURIComponent(card.cardName)}`, { state: { cardImg: card.cardImg, cardName: card.cardName } })}
+          onClick={() => {
+            // cardImg에서 카드 ID 추출 (예: "/src/assets/cards/3.png" -> 3)
+            const cardId = card.cardId || (() => {
+              const match = card.cardImg.match(/\/(\d+)\.png$/);
+              return match ? parseInt(match[1]) : null;
+            })();
+            
+            navigate(`/card-detail/${encodeURIComponent(card.cardName)}`, { 
+              state: { 
+                cardImg: card.cardImg, 
+                cardName: card.cardName,
+                cardId: cardId
+              } 
+            });
+          }}
           onMouseEnter={() => setHoverIdx(idx)}
           onMouseLeave={() => setHoverIdx(null)}
         >
@@ -80,10 +95,11 @@ export default function CardRecommendContent1({ cards }: CardRecommendContent1Pr
           />
           <div style={{ color: "#222" }}>
             <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 10 }}>
-              <span style={{ fontSize: 20, padding: 2 }}>{card.medal}</span>
-              {card.cardName} <span style={{ fontSize: 18, padding: 1 }}>(총 {card.recommendCount}회 추천)</span>
+              <span style={{ fontSize: 16, marginLeft: 8, color: COLORS.accent }}>{card.recommendCount}회 추천!</span>
+              <br />
+              <span style={{ fontSize: 20, padding: 2 }}>{card.medal}</span>{card.cardName}
             </div>
-            <div style={{ fontSize: 18, width: 240, marginBottom: 20 }}>{card.benefit}</div>
+            <div style={{  fontSize: 16, width: 220, marginLeft: 8 }}>{card.benefit}</div>
           </div>
           <img 
             src="/src/assets/icons/right.png" 

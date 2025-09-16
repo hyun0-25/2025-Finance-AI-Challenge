@@ -1,46 +1,106 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { COLORS } from '../styles/colors';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// 추천 응답 인터페이스
+interface UserCardRecommend {
+  cardId: number;
+  recommendContent: string;
+}
+
+interface NewCardRecommend {
+  cardId: number;
+  recommendContent: string;
+}
+
+interface RecommendResponse {
+  userCardRecommend: UserCardRecommend[];
+  newCardRecommend: NewCardRecommend[];
+}
 
 const AiCardRecommendPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [recommendData, setRecommendData] = useState<RecommendResponse | null>(null);
 
-  // 카드 데이터
-  const cards = [
-    {
-      img: "/public/card-img.png",
-      name: "A카드입니다",
-      tags: "#국내숙소 #국내교통 #할인"
-    },
-    {
-      img: "/public/card-img.png",
-      name: "B카드입니다", 
-      tags: "#해외여행 #항공 #호텔"
-    },
-    {
-      img: "/public/card-img.png",
-      name: "C카드입니다",
-      tags: "#쇼핑 #온라인 #적립"
+  // 카드 데이터 가공 함수
+  const getProcessedCards = () => {
+    if (recommendData?.newCardRecommend && recommendData.newCardRecommend.length > 0) {
+      return recommendData.newCardRecommend.map(card => {
+        const content = card.recommendContent;
+        // "발급 후 이용 시" 앞까지를 name으로 추출
+        const nameMatch = content.match(/^(.+?)\s발급 후 이용 시/);
+        const name = nameMatch ? nameMatch[1] : `카드 ID ${card.cardId}`;
+        
+        // "발급 후 이용 시" 다음부터 "을 받을 수 있어요!" 앞까지를 tags로 추출
+        const tagsMatch = content.match(/발급 후 이용 시\s(.+?)\s혜택을 받을 수 있어요!/);
+        const tags = tagsMatch ? tagsMatch[1] : "";
+        
+        return {
+          img: `/src/assets/cards/${card.cardId}.png`,
+          name: name,
+          tags: tags,
+          cardId: card.cardId // 카드 ID 추가
+        };
+      });
     }
-  ];
+    
+    return [];
+  };
+
+  // 가공된 카드 데이터
+  const cards = getProcessedCards();
+
+  // 카드 클릭 핸들러
+  const handleCardClick = (card: any) => {
+    console.log('카드 클릭:', card);
+    navigate(`/card-detail/${encodeURIComponent(card.name)}`, {
+      state: {
+        cardImg: card.img,
+        cardName: card.name,
+        cardId: card.cardId
+      }
+    });
+  };
 
   const handleIndicatorClick = (index: number) => {
     setCurrentCardIndex(index);
   };
 
-  // 페이지 로딩 효과
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  // 추천 데이터 가져오기
+  const fetchRecommendations = async (scheduleId: number) => {
+    try {
+      console.log(`카드 추천 요청: scheduleId=${scheduleId}`);
+      const response = await axios.post(`${API_BASE_URL}/schedules/${scheduleId}/recommend`);
+      console.log('카드 추천 응답:', response.data);
+      setRecommendData(response.data);
       setIsLoading(false);
-    }, 1000);
+    } catch (error) {
+      console.error('카드 추천 요청 실패:', error);
+      setIsLoading(false);
+    }
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  // 페이지 로딩 및 데이터 요청
+  useEffect(() => {
+    const scheduleId = location.state?.scheduleId;
+    
+    if (scheduleId) {
+      console.log('전달받은 scheduleId:', scheduleId);
+      fetchRecommendations(scheduleId);
+    } else {
+      console.log('scheduleId가 전달되지 않음');
+      setIsLoading(false);
+    }
+  }, [location.state]);
 
   // 로딩 화면
-  if (isLoading) {
+  if (isLoading || !recommendData) {
     return (
       <div style={{
         display: 'flex',
@@ -145,7 +205,11 @@ const AiCardRecommendPage: React.FC = () => {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
             <img 
-              src="/public/card-img.png" 
+              src={
+                recommendData?.userCardRecommend?.[0]?.cardId 
+                  ? `/src/assets/cards/${recommendData.userCardRecommend[0].cardId}.png`
+                  : "/public/card-img.png"
+              }
               alt="카드" 
               style={{ 
                 width: '83px', 
@@ -164,25 +228,12 @@ const AiCardRecommendPage: React.FC = () => {
                 내 카드
               </div>
               <div style={{ 
-                fontSize: 18, 
-                color: COLORS.black,
-                // 글자사이에 높이 줄이기
-                lineHeight: 1.2,
-                marginBottom: 12
-              }}>
-                여행에 필요한 교통 할인이<br/>
-                좋은 카드입니다!
-              </div>
-              <div style={{ 
                 fontSize: 16, 
-                // 연한 그레이색
-                color: "#888",
-                // 한줄에 끝나게
-                whiteSpace: 'nowrap', 
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis'
+                color: COLORS.black,
+                width: 220
               }}>
-                비행기 할인 / 마일리지 30% 어쩌고
+                {recommendData?.userCardRecommend?.[0]?.recommendContent || 
+                 "여행에 필요한 비행기 할인 / 마일리지 30% 혜택이 있는 좋은 카드입니다!"}
               </div>
             </div>
           </div>
@@ -289,8 +340,10 @@ const AiCardRecommendPage: React.FC = () => {
                   style={{ 
                     width: '108px', 
                     height: '172px',
-                    borderRadius: 4
-                  }} 
+                    borderRadius: 4,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleCardClick(card)}
                 />
               </div>
             ))}
@@ -318,19 +371,26 @@ const AiCardRecommendPage: React.FC = () => {
                   flexShrink: 0
                 }}
               >
-                <div style={{ 
-                  fontSize: 20, 
-                  fontWeight: 700, 
-                  color: COLORS.black,
-                  marginBottom: 8
-                }}>
+                <div 
+                  style={{ 
+                    fontSize: 20, 
+                    fontWeight: 700, 
+                    color: COLORS.black,
+                    marginBottom: 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleCardClick(card)}
+                >
                   {card.name}
                 </div>
-                <div style={{ 
-                  fontSize: 16, 
+                <div style={{
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  fontSize: 14, 
                   color: COLORS.black
                 }}>
-                  {card.tags}
+                  {card.tags} 등
                 </div>
               </div>
             ))}
