@@ -36,7 +36,7 @@ const Notification: React.FC = () => {
     fetchNotifications();
   }, []);
 
-  // 3초마다 알림 하나씩 추가 (쌓이는 방식)
+  // 3초마다 알림 하나씩 추가 (쌓이는 방식) - 최대 3개
   useEffect(() => {
     if (notifications.length === 0) return;
 
@@ -47,7 +47,7 @@ const Notification: React.FC = () => {
 
     let currentIndex = 1;
     const interval = setInterval(() => {
-      if (currentIndex < notifications.length) {
+      if (currentIndex < notifications.length && currentIndex < 3) { // 최대 3개 제한
         setVisibleNotifications(prev => [...prev, notifications[currentIndex]]);
         currentIndex++;
       } else {
@@ -92,19 +92,29 @@ const Notification: React.FC = () => {
           <div
             key={notification.notificationId}
             style={{
-              background: hoverIdx === idx ? COLORS.accent : COLORS.main,
+              background: 'rgba(255, 255, 255, 0.3)', // 반투명 배경
               borderRadius: '12px',
               padding: '12px',
               cursor: 'pointer',
-              transition: 'background 0.2s',
-              animation: 'slideIn 0.3s ease-out'
+              transition: 'transform 0.2s ease, background 0.2s ease',
+              transform: hoverIdx === idx ? 'scale(1.05)' : 'scale(1)',
+              animation: 'slideIn 0.3s ease-out',
+              backdropFilter: 'blur(10px)', // 블러 효과
+              border: '1px solid rgba(255, 255, 255, 0.2)' // 얇은 테두리
             }}
             onClick={handleNotificationClick}
             onMouseEnter={() => setHoverIdx(idx)}
             onMouseLeave={() => setHoverIdx(null)}
           >
             <div style={{ fontWeight: 500 }}>{notification.title}</div>
-            <div style={{ color: '#000000', fontSize: '12px' }}>{notification.body}</div>
+            <div style={{ color: '#000000', fontSize: '12px', marginTop: '2px' }}>{notification.body}</div>
+            <div style={{ 
+              color: '#000000', 
+              fontSize: '11px', 
+              textAlign: 'right' 
+            }}>
+              [설정 &gt; 알림 끄기]
+            </div>
           </div>
         ))}
       </div>
