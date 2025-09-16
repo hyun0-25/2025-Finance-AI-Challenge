@@ -44,33 +44,29 @@ const AiCardRecommendPage: React.FC = () => {
         return {
           img: `/src/assets/cards/${card.cardId}.png`,
           name: name,
-          tags: tags
+          tags: tags,
+          cardId: card.cardId // 카드 ID 추가
         };
       });
     }
     
-    // 기본 카드 데이터 (API 데이터가 없을 때)
-    return [
-      {
-        img: "/public/card-img.png",
-        name: "A카드입니다",
-        tags: "#국내숙소 #국내교통 #할인"
-      },
-      {
-        img: "/public/card-img.png",
-        name: "B카드입니다", 
-        tags: "#해외여행 #항공 #호텔"
-      },
-      {
-        img: "/public/card-img.png",
-        name: "C카드입니다",
-        tags: "#쇼핑 #온라인 #적립"
-      }
-    ];
+    return [];
   };
 
   // 가공된 카드 데이터
   const cards = getProcessedCards();
+
+  // 카드 클릭 핸들러
+  const handleCardClick = (card: any) => {
+    console.log('카드 클릭:', card);
+    navigate(`/card-detail/${encodeURIComponent(card.name)}`, {
+      state: {
+        cardImg: card.img,
+        cardName: card.name,
+        cardId: card.cardId
+      }
+    });
+  };
 
   const handleIndicatorClick = (index: number) => {
     setCurrentCardIndex(index);
@@ -83,8 +79,10 @@ const AiCardRecommendPage: React.FC = () => {
       const response = await axios.post(`${API_BASE_URL}/schedules/${scheduleId}/recommend`);
       console.log('카드 추천 응답:', response.data);
       setRecommendData(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error('카드 추천 요청 실패:', error);
+      setIsLoading(false);
     }
   };
 
@@ -97,17 +95,12 @@ const AiCardRecommendPage: React.FC = () => {
       fetchRecommendations(scheduleId);
     } else {
       console.log('scheduleId가 전달되지 않음');
-    }
-
-    const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    }
   }, [location.state]);
 
   // 로딩 화면
-  if (isLoading) {
+  if (isLoading || !recommendData) {
     return (
       <div style={{
         display: 'flex',
@@ -347,8 +340,10 @@ const AiCardRecommendPage: React.FC = () => {
                   style={{ 
                     width: '108px', 
                     height: '172px',
-                    borderRadius: 4
-                  }} 
+                    borderRadius: 4,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleCardClick(card)}
                 />
               </div>
             ))}
@@ -376,12 +371,16 @@ const AiCardRecommendPage: React.FC = () => {
                   flexShrink: 0
                 }}
               >
-                <div style={{ 
-                  fontSize: 20, 
-                  fontWeight: 700, 
-                  color: COLORS.black,
-                  marginBottom: 8
-                }}>
+                <div 
+                  style={{ 
+                    fontSize: 20, 
+                    fontWeight: 700, 
+                    color: COLORS.black,
+                    marginBottom: 8,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleCardClick(card)}
+                >
                   {card.name}
                 </div>
                 <div style={{
@@ -391,7 +390,7 @@ const AiCardRecommendPage: React.FC = () => {
                   fontSize: 14, 
                   color: COLORS.black
                 }}>
-                  {card.tags}
+                  {card.tags} 등
                 </div>
               </div>
             ))}

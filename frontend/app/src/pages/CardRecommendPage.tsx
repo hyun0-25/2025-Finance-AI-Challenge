@@ -2,26 +2,26 @@ import CardRecommendContent1 from "../components/cardRecommend/CardRecommendCont
 
 export default function CardRecommendPage() {
   const CardRecommendData = [
-    {
-      cardImg: "/card-img.png",
-      cardName: "A카드",
-      recommendCount: 4,
-      benefit: "주말 데이트 시 카페/맛집 할인 혜택을 위해 추천됐어요!",
-      medal: "🥇",
+{
+      cardImg: `/src/assets/cards/6.png`,
+      cardName: "T끌카드 SOL트래블",
+      recommendCount: 15,
+      benefit: "환율 우대, 국내외 더하기 서비스, 수수료 빼기 서비스",
+      medal: "🥇"
     },
     {
-      cardImg: "/card-img.png",
-      cardName: "B카드",
-      recommendCount: 2,
-      benefit: "주말 데이트 시 카페/맛집 할인 혜택을 위해 추천됐어요!",
-      medal: "🥈",
+      cardImg: `/src/assets/cards/7.png`,
+      cardName: "T끌카드 SOL Plan",
+      recommendCount: 12,
+      benefit: "주유 포인트 적립 5% 및 모든 가맹점 포인트 적립 1.5%",
+      medal: "🥈"
     },
     {
-      cardImg: "/card-img.png",
-      cardName: "C카드",
-      recommendCount: 1,
-      benefit: "주말 데이트 시 카페/맛집 할인 혜택을 위해 추천됐어요!",
-      medal: "🥉",
+      cardImg: `/src/assets/cards/10.png`,
+      cardName: "T끌카드  B.Big(삑)",
+      recommendCount: 8,
+      benefit: "영화/문화 할인, 카페/디저트 할인 10%, 교통 할인 10%",
+      medal: "🥉"
     }
   ];
 

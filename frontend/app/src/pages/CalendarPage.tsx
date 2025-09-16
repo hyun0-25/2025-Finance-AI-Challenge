@@ -196,7 +196,7 @@ const CalendarPage: React.FC = () => {
     try {
       console.log(`체크리스트 항목 추가 요청: scheduleId=${scheduleId}, item=${newChecklistItem}`);
       await axios.post(`${API_BASE_URL}/schedules/${scheduleId}/checklist`, {
-        checklistItemName: newChecklistItem
+        checklistItemContent: newChecklistItem
       });
       console.log('체크리스트 항목 추가 성공');
       setNewChecklistItem('');

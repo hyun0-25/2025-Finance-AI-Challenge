@@ -1,14 +1,104 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { COLORS } from '../styles/colors';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// 카드 상세 정보 인터페이스
+interface CardDetail {
+  cardId: number;
+  cardName: string;
+  cardCategory: string;
+  cardAnnualFeeDomestic: number;
+  cardAnnualFeeInternational: number;
+  benefitListResponseDtoList: CardBenefit[];
+}
+
+interface CardBenefit {
+  benefitCategoryAndBenefitInfo: string;
+  benefitContent: string;
+}
 
 export default function CardDetailPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  // cardImg, cardName은 CardRecommendContent1에서 state로 전달
-  const { cardImg, cardName } = (location.state || {}) as { cardImg?: string; cardName?: string };
+  const [cardDetail, setCardDetail] = useState<CardDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // cardImg, cardName, cardId는 CardRecommendContent1에서 state로 전달
+  const { cardImg, cardName, cardId } = (location.state || {}) as { 
+    cardImg?: string; 
+    cardName?: string; 
+    cardId?: number;
+  };
+
+  // 카드 상세 정보 가져오기
+  useEffect(() => {
+    const fetchCardDetail = async () => {
+      if (!cardId) {
+        console.log('카드 ID가 없습니다.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        console.log(`카드 상세 정보 요청: cardId=${cardId}`);
+        const response = await axios.get(`${API_BASE_URL}/cards/${cardId}`);
+        console.log('카드 상세 정보 응답:', response.data);
+        setCardDetail(response.data);
+      } catch (error) {
+        console.error('카드 상세 정보 조회 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardDetail();
+  }, [cardId]);
 
   if (!cardImg || !cardName) {
     return <div style={{ padding: 32 }}>카드 정보가 없습니다.</div>;
+  }
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#fff'
+      }}>
+        {/* 스피너 */}
+        <div style={{
+          width: '40px',
+          height: '40px',
+          border: `4px solid #f3f3f3`,
+          borderTop: `4px solid ${COLORS.main}`,
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        
+        <div style={{
+          marginTop: 16,
+          fontSize: 16,
+          color: COLORS.black,
+          fontWeight: 500
+        }}>
+          카드 정보를 불러오는 중...
+        </div>
+
+        {/* CSS 애니메이션 */}
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
@@ -38,9 +128,16 @@ export default function CardDetailPage() {
         </button>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
-        <div style={{ fontWeight: 700, fontSize: 28 }}>{cardName}</div>
+        <div style={{ fontWeight: 700, fontSize: 28 }}>
+          {cardName || cardDetail?.cardName}
+        </div>
         <img src={cardImg} alt={cardName} style={{ width: 100, borderRadius: 8, margin: 12 }} />
-        <div style={{ color: COLORS.black, fontSize: 18, marginTop: 8 }}>OO만원(국내전용) / OO만원(해외겸용)</div>
+        <div style={{ color: COLORS.black, fontSize: 18, marginTop: 8 }}>
+          {cardDetail 
+            ? `${cardDetail.cardAnnualFeeDomestic?.toLocaleString()}원(국내전용) / ${cardDetail.cardAnnualFeeInternational?.toLocaleString()}원(해외겸용)`
+            : "연회비 정보 로딩 중..."
+          }
+        </div>
       </div>
       <div style={{ maxWidth: 400, margin: '0 12px', padding: 12 }}>
         {/* 맞춤 혜택 */}
@@ -60,20 +157,20 @@ export default function CardDetailPage() {
             backgroundColor: COLORS.light,
             flex: 1
           }}>
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
-
-            <div>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
+            {cardDetail?.benefitListResponseDtoList?.slice(0, 3).map((benefit, index) => (
+              <div key={index} style={{ marginBottom: index < 2 ? 12 : 0 }}>
+                <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>
+                  {benefit.benefitCategoryAndBenefitInfo}
+                </div>
+                <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>
+                  {benefit.benefitContent}
+                </div>
+              </div>
+            )) || (
+              <div style={{ color: '#666', fontSize: 14 }}>
+                혜택 정보를 불러오는 중...
+              </div>
+            )}
           </div>
         </div>
 
@@ -88,23 +185,21 @@ export default function CardDetailPage() {
           }}>
             주요<br/>혜택
           </div>
-          <div style={{ flex: 1,
-            padding: 10, 
-          }}>
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
-            
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
-            
-            <div>
-              <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>카페/디저트 할인 30%</div>
-              <div style={{ color: '#666', fontSize: 14, lineHeight: 1.4 }}>스타벅스, 투썸플레이스, 카페베네, 어쩌고저쩌고 살라살라</div>
-            </div>
+          <div style={{ flex: 1, padding: 10 }}>
+            {cardDetail?.benefitListResponseDtoList?.slice(3, 6).map((benefit, index) => (
+              <div key={index} style={{ marginBottom: index < 2 ? 16 : 0 }}>
+                <div style={{ color: COLORS.accent, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>
+                  {benefit.benefitCategoryAndBenefitInfo}
+                </div>
+                <div style={{ color: '#666', fontSize: 13, lineHeight: 1.4 }}>
+                  {benefit.benefitContent}
+                </div>
+              </div>
+            )) || (
+              <div style={{ color: '#666', fontSize: 14 }}>
+                혜택 정보를 불러오는 중...
+              </div>
+            )}
           </div>
         </div>
         {/* 꼭 알아두세요 */}
