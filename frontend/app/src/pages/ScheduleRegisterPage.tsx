@@ -169,6 +169,8 @@ const ScheduleRegisterPage: React.FC = () => {
   const [form, setForm] = useState(initialForm);
   const [allDay, setAllDay] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalScheduleId, setOriginalScheduleId] = useState<number | null>(null);
   
   // 시간 입력을 위한 상태
   const [startAmPm, setStartAmPm] = useState('오전');
@@ -182,11 +184,73 @@ const ScheduleRegisterPage: React.FC = () => {
   const location = useLocation();
   const colorInputRef = useRef<HTMLInputElement>(null);
 
-  // 캘린더에서 전달받은 선택된 날짜 처리 또는 기본값 설정
+  // 시간 파싱 함수 (HH:mm:ss -> 오전/오후 시:분)
+  const parseTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const amPm = hours >= 12 ? '오후' : '오전';
+    const displayHour = hours === 0 ? 12 : (hours > 12 ? hours - 12 : hours);
+    return {
+      amPm,
+      hour: displayHour.toString(),
+      minute: minutes.toString().padStart(2, '0')
+    };
+  };
+
+  // 캘린더에서 전달받은 선택된 날짜 또는 기존 일정 데이터 처리
   useEffect(() => {
     const selectedDate = location.state?.selectedDate;
-    if (selectedDate) {
-      // 한국 시간대를 고려한 날짜 처리
+    const scheduleDetail = location.state?.scheduleDetail;
+    const isEdit = location.state?.isEdit;
+
+    if (isEdit && scheduleDetail) {
+      // 수정 모드: 기존 일정 데이터로 폼 초기화
+      console.log('수정 모드로 진입:', scheduleDetail);
+      setIsEditMode(true);
+      setOriginalScheduleId(scheduleDetail.scheduleId);
+      
+      // 날짜 및 시간 파싱
+      const startDateTime = new Date(scheduleDetail.scheduleStartDate);
+      const endDateTime = new Date(scheduleDetail.scheduleEndDate);
+      
+      const startDateStr = `${startDateTime.getFullYear()}-${String(startDateTime.getMonth() + 1).padStart(2, '0')}-${String(startDateTime.getDate()).padStart(2, '0')}`;
+      const endDateStr = `${endDateTime.getFullYear()}-${String(endDateTime.getMonth() + 1).padStart(2, '0')}-${String(endDateTime.getDate()).padStart(2, '0')}`;
+      
+      const startTimeStr = `${String(startDateTime.getHours()).padStart(2, '0')}:${String(startDateTime.getMinutes()).padStart(2, '0')}:${String(startDateTime.getSeconds()).padStart(2, '0')}`;
+      const endTimeStr = `${String(endDateTime.getHours()).padStart(2, '0')}:${String(endDateTime.getMinutes()).padStart(2, '0')}:${String(endDateTime.getSeconds()).padStart(2, '0')}`;
+      
+      // 하루종일 여부 확인
+      const isAllDay = startTimeStr === '00:00:00' && endTimeStr === '23:59:59';
+      setAllDay(isAllDay);
+      
+      // 시간 정보 설정
+      if (!isAllDay) {
+        const startTime = parseTime(startTimeStr);
+        const endTime = parseTime(endTimeStr);
+        
+        setStartAmPm(startTime.amPm);
+        setStartHour(startTime.hour);
+        setStartMinute(startTime.minute);
+        setEndAmPm(endTime.amPm);
+        setEndHour(endTime.hour);
+        setEndMinute(endTime.minute);
+      }
+      
+      // 폼 데이터 설정
+      setForm({
+        scheduleName: scheduleDetail.scheduleName,
+        scheduleColor: scheduleDetail.scheduleColor,
+        scheduleStartDate: `${startDateStr}T${startTimeStr.substring(0, 5)}`,
+        scheduleEndDate: `${endDateStr}T${endTimeStr.substring(0, 5)}`,
+        scheduleFrequencyType: scheduleDetail.scheduleFrequencyType,
+        scheduleRepeatEndDate: scheduleDetail.scheduleRepeatEndDate || 'null',
+        scheduleIsChecklist: scheduleDetail.scheduleIsChecklist,
+      });
+      
+    } else if (selectedDate) {
+      // 새 일정 등록 모드
+      console.log('새 일정 등록 모드');
+      setIsEditMode(false);
+      
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const day = String(selectedDate.getDate()).padStart(2, '0');
@@ -277,22 +341,41 @@ const ScheduleRegisterPage: React.FC = () => {
       };
       
       console.log('전송 데이터:', apiData);
-      const response = await axios.post(`${API_BASE_URL}/schedules`, apiData);
       
-      // 체크리스트가 활성화되어 있다면 추가 요청
-      if (form.scheduleIsChecklist) {
-        const scheduleId = response.data.scheduleId || response.data.id; // API 응답 구조에 따라 조정
-        console.log('체크리스트 활성화 요청 - scheduleId:', scheduleId);
-        await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/on-off`, {
-          enable: true
-        });
-        console.log('체크리스트 활성화 완료');
+      if (isEditMode && originalScheduleId) {
+        // 수정 모드: PUT 요청
+        console.log('일정 수정 요청:', originalScheduleId);
+        await axios.put(`${API_BASE_URL}/schedules/${originalScheduleId}`, apiData);
+        console.log('일정 수정 성공');
+        
+        // 체크리스트 상태 업데이트
+        if (form.scheduleIsChecklist) {
+          console.log('체크리스트 활성화 요청 - scheduleId:', originalScheduleId);
+          await axios.put(`${API_BASE_URL}/schedules/${originalScheduleId}/on-off`, {
+            enable: true
+          });
+          console.log('체크리스트 활성화 완료');
+        }
+      } else {
+        // 등록 모드: POST 요청
+        const response = await axios.post(`${API_BASE_URL}/schedules`, apiData);
+        console.log('일정 등록 성공');
+        
+        // 체크리스트가 활성화되어 있다면 추가 요청
+        if (form.scheduleIsChecklist) {
+          const scheduleId = response.data.scheduleId || response.data.id; // API 응답 구조에 따라 조정
+          console.log('체크리스트 활성화 요청 - scheduleId:', scheduleId);
+          await axios.put(`${API_BASE_URL}/schedules/${scheduleId}/on-off`, {
+            enable: true
+          });
+          console.log('체크리스트 활성화 완료');
+        }
       }
       
       navigate('/calendar');
     } catch (err) {
-      console.error('등록 실패:', err);
-      alert('등록 실패');
+      console.error(isEditMode ? '수정 실패:' : '등록 실패:', err);
+      alert(isEditMode ? '수정 실패' : '등록 실패');
     } finally {
       setLoading(false);
     }
@@ -309,40 +392,44 @@ const ScheduleRegisterPage: React.FC = () => {
         `}
       </style>
       <div style={{ maxWidth: 412, maxHeight: '100vh'}}>
-      {/* 상단 바: 닫기, 타이틀, 저장(체크) */}
+      {/* 상단 바: 닫기, 타이틀, 삭제(수정모드시), 저장(체크) */}
       <div style={{ display: 'flex', alignItems: 'center', marginTop: 60, padding: '0 16px' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img src={XIcon} alt="닫기" style={{ width: 16, height: 16 }} />
         </button>
-        <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 24 }}>일정 등록</div>
-        <button 
-          onClick={handleSubmit} 
-          disabled={loading}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            width: 32, 
-            height: 32, 
-            cursor: loading ? 'not-allowed' : 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            opacity: loading ? 0.5 : 1
-          }}
-        >
-          {loading ? (
-            <div style={{ 
-              width: 16, 
-              height: 16, 
-              border: '2px solid #ddd', 
-              borderTop: '2px solid #007AFF',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }} />
-          ) : (
-            <img src={CheckIcon} alt="저장" style={{ width: 32, height: 16 }} />
-          )}
-        </button>  
+        <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 24 }}>
+          {isEditMode ? '일정 수정' : '일정 등록'}
+        </div>
+        <div style={{ display: 'flex' }}>
+          <button 
+            onClick={handleSubmit} 
+            disabled={loading}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              width: 32, 
+              height: 32, 
+              cursor: loading ? 'not-allowed' : 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              opacity: loading ? 0.5 : 1
+            }}
+          >
+            {loading ? (
+              <div style={{ 
+                width: 16, 
+                height: 16, 
+                border: '2px solid #ddd', 
+                borderTop: '2px solid #007AFF',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }} />
+            ) : (
+              <img src={CheckIcon} alt="저장" style={{ width: 32, height: 16 }} />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 일정명 & 컬러 선택 세션 */}

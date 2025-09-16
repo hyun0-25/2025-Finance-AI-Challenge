@@ -409,7 +409,38 @@ const CalendarPage: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                     }}>
-                      <span>{schedule.scheduleName}</span>
+                      <span 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          const detail = scheduleDetails[schedule.scheduleId];
+                          if (detail) {
+                            console.log('일정 상세 조회로 이동:', detail);
+                            navigate('/schedule-register', { 
+                              state: { 
+                                selectedDate: selectedDate,
+                                scheduleDetail: detail,
+                                isEdit: true // 수정/조회 모드 표시
+                              }
+                            });
+                          } else {
+                            // 상세 정보가 없으면 먼저 가져온 후 이동
+                            fetchScheduleDetail(schedule.scheduleId).then(() => {
+                              const updatedDetail = scheduleDetails[schedule.scheduleId];
+                              if (updatedDetail) {
+                                navigate('/schedule-register', { 
+                                  state: { 
+                                    selectedDate: selectedDate,
+                                    scheduleDetail: updatedDetail,
+                                    isEdit: true
+                                  }
+                                });
+                              }
+                            });
+                          }
+                        }}
+                      >
+                        {schedule.scheduleName}
+                      </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
