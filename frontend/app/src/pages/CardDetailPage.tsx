@@ -130,7 +130,7 @@ export default function CardDetailPage() {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
         <div style={{ fontWeight: 700, fontSize: 28 }}>
-          {cardName || cardDetail?.cardName}
+          {(cardName || cardDetail?.cardName)?.replace(/신한/g, 'T끌')}
         </div>
         <img src={cardImg} alt={cardName} style={{ width: 100, borderRadius: 8, margin: 12 }} />
         <div style={{ color: COLORS.black, fontSize: 18, marginTop: 8 }}>

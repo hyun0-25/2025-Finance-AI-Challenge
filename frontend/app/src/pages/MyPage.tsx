@@ -301,7 +301,7 @@ const MyPage: React.FC = () => {
                         color: COLORS.black,
                         margin: '0 0 4px 0'
                       }}>
-                        {detail?.cardName || (
+                        {detail?.cardName?.replace(/신한/g, 'T끌') || (
                           <span style={{ color: COLORS.gray }}>카드 정보 로딩 중...</span>
                         )}
                       </h3>

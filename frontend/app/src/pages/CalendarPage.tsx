@@ -45,6 +45,7 @@ const CalendarPage: React.FC = () => {
   const [modalSchedule, setModalSchedule] = useState<ScheduleDetail | null>(null);
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [isLoadingSchedules, setIsLoadingSchedules] = useState(true); // 일정 로딩 상태 추가
+  const [isLoadingScheduleDetails, setIsLoadingScheduleDetails] = useState(false); // 일정 상세 정보 로딩 상태 추가
   const navigate = useNavigate();
 
   // 일정 상세 정보 가져오기
@@ -69,9 +70,13 @@ const CalendarPage: React.FC = () => {
     
     // 선택된 날짜의 일정들을 가져와서 상세 정보 요청
     const dateSchedules = getSchedulesForDate(date);
-    dateSchedules.forEach(schedule => {
-      fetchScheduleDetail(schedule.scheduleId);
-    });
+    if (dateSchedules.length > 0) {
+      setIsLoadingScheduleDetails(true);
+      Promise.all(dateSchedules.map(schedule => fetchScheduleDetail(schedule.scheduleId)))
+        .finally(() => {
+          setIsLoadingScheduleDetails(false);
+        });
+    }
   };
 
   // AI 체크리스트 활성화 API 호출
@@ -434,16 +439,19 @@ const CalendarPage: React.FC = () => {
         });
         
         // 선택된 날짜의 일정들에 대해 상세 정보 요청
-        selectedDateSchedules.forEach((schedule: Schedule) => {
-          fetchScheduleDetail(schedule.scheduleId);
-        });
+        if (selectedDateSchedules.length > 0) {
+          setIsLoadingScheduleDetails(true);
+          Promise.all(selectedDateSchedules.map((schedule: Schedule) => fetchScheduleDetail(schedule.scheduleId)))
+            .finally(() => {
+              setIsLoadingScheduleDetails(false);
+            });
+        }
       })
       .catch(err => {
         console.error('일정 조회 실패:', err);
         setIsLoadingSchedules(false); // 로딩 완료 (실패해도)
       });
-  }, [currentDate, selectedDate]); // selectedDate도 의존성에 추가
-
+  }, [currentDate]);
   // 특정 날짜에서 시작하는 일정만 가져오기 (막대 표시용)
   const getSchedulesStartingOnDate = (date: Date) => {
     return schedules.filter(schedule => {
@@ -669,7 +677,23 @@ const CalendarPage: React.FC = () => {
           {format(selectedDate, 'd. eee', { locale: ko })}
         </div>
         
-        {selectedDateSchedules.length > 0 ? (
+        {isLoadingScheduleDetails ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            padding: '40px 0' 
+          }}>
+            <div style={{
+              width: '24px',
+              height: '24px',
+              border: '2px solid #e3e8ef',
+              borderTop: '2px solid #2563eb',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+          </div>
+        ) : selectedDateSchedules.length > 0 ? (
           <div>
             {selectedDateSchedules.map((schedule, index) => (
               <div 
@@ -1048,8 +1072,8 @@ const CalendarPage: React.FC = () => {
           position: 'absolute', 
           right: 20, 
           bottom: 150,
-          width: 72, 
-          height: 72, 
+          width: 64, 
+          height: 64, 
           borderRadius: '50%', 
           background: COLORS.sub, 
           color: COLORS.white, 
@@ -1064,6 +1088,14 @@ const CalendarPage: React.FC = () => {
       >
         +
       </button>
+      
+      {/* 스피너 애니메이션을 위한 스타일 */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
