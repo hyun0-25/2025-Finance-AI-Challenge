@@ -155,7 +155,7 @@ const MyPage: React.FC = () => {
 
       {/* 메인 컨텐츠 영역 */}
       <div style={{ 
-        height: 'calc(100vh - 120px)', // 헤더 및 NavigationBar 높이 제외
+        height: 'calc(100vh - 180px)', // 헤더 및 NavigationBar 높이 제외
         padding: '0 20px',
       }}>
         <h2 style={{
