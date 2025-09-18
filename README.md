@@ -7,7 +7,7 @@
 
 ---
 
-## 📌 주요 기능
+## 주요 기능
 
 ### 1. AI 체크리스트
 - 사용자가 캘린더에 일정을 입력하면, AI가 해당 이벤트에 필요한 소비 항목들을 자동으로 제안합니다.
@@ -23,7 +23,7 @@
 
 ---
 
-## 🏗️ 아키텍처
+## 아키텍처
 
 AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)** 로 구성된 마이크로서비스 아키텍처를 따릅니다.
 
@@ -31,18 +31,20 @@ AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)*
 - **Backend**: 핵심 비즈니스 로직 처리 (Spring Boot)
 - **AI Server**: AI 관련 기능 전담 (FastAPI + OpenAI API)
 
-### 📷 시스템 아키텍처
+### 시스템 아키텍처
 <img width="813" height="640" alt="image" src="https://github.com/user-attachments/assets/93a3df5e-6f3b-4613-a788-55b79981dd75" />
 
 ---
 
+## ERD
+<img width="3380" height="1442" alt="image" src="https://github.com/user-attachments/assets/b7471a44-63a5-4976-8325-0b748e33197f" />
+
 ## 🗂 IA 구조도
 <img width="822" height="740" alt="ai_challenge (1)" src="https://github.com/user-attachments/assets/31b1b298-07db-4ab2-840e-88921ed11a2f" />
 
-
 ---
 
-## 📂 기술 스택
+## 기술 스택
 
 ### Frontend
 - React, TypeScript, Vite, React Router, Tailwind CSS
@@ -55,7 +57,7 @@ AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)*
 
 ---
 
-## ⚙️ 설치 및 실행 방법
+## 설치 및 실행 방법
 
 ### 1. Frontend
 ```bash
@@ -81,7 +83,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 🌱 Git Branch 전략
+## Git Branch 전략
 - **main**: 운영 배포용 브랜치
 - **develop**: 개발 통합 브랜치
 - **feature/**: 기능 단위 개발 브랜치
