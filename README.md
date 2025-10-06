@@ -30,16 +30,16 @@ AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)*
 - **Frontend**: 사용자 인터페이스 담당 (React, TypeScript, Vite)
 - **Backend**: 핵심 비즈니스 로직 처리 (Spring Boot)
 - **AI Server**: AI 관련 기능 전담 (FastAPI + OpenAI API)
+  
+<br>
 
-### 시스템 아키텍처
-<img width="813" height="640" alt="image" src="https://github.com/user-attachments/assets/93a3df5e-6f3b-4613-a788-55b79981dd75" />
-
----
+## 시스템 아키텍처
+<img width="813" height="640" alt="image" src="https://github.com/user-attachments/assets/6206cc26-b4da-4d64-8286-0acebebf1f4d" />
 
 ## ERD
 <img width="3380" height="1442" alt="image" src="https://github.com/user-attachments/assets/b7471a44-63a5-4976-8325-0b748e33197f" />
 
-## 🗂 IA 구조도
+## IA 구조도
 <img width="822" height="740" alt="ai_challenge (1)" src="https://github.com/user-attachments/assets/31b1b298-07db-4ab2-840e-88921ed11a2f" />
 
 ---
