@@ -11,15 +11,19 @@
 
 ### 1. AI 체크리스트
 - 사용자가 캘린더에 일정을 입력하면, AI가 해당 이벤트에 필요한 소비 항목들을 자동으로 제안합니다.
+<img src="https://github.com/user-attachments/assets/871c4244-fd70-4dcc-b252-38c78afd4da0" width="200" style="border-radius:15px;"/>
 
 ### 2. AI 카드 추천
 - 체크리스트 항목을 기반으로 사용자의 **보유 카드**와 **신규 추천 카드** 중 최적의 혜택을 제공하는 카드를 선별하여 추천합니다.
+<img src="https://github.com/user-attachments/assets/57a40b3d-997a-41a8-9ba5-0d7531083f2b" width="200" style="border-radius:15px;"/>
 
 ### 3. 맞춤형 알림
 - 일정명과 D-Day에 맞춰 **AI가 생성한 개인화된 알림 메시지**(제목 및 본문)를 전송하여 사용자의 금융 생활을 돕습니다.
+<img src="https://github.com/user-attachments/assets/77d15771-288a-4c1e-9d48-7b7d9cc5faf4" width="200" style="border-radius:15px;"/>
 
 ### 4. 개인화된 분기별 리포트
 - 지난 일정들을 요약하고, 이를 기반으로 생성된 **개인화 키워드**와 **캐릭터 이미지**를 제공하여 사용자가 자신의 라이프스타일을 돌아볼 수 있는 재미있는 경험을 제공합니다.
+<img src="https://github.com/user-attachments/assets/61fb4ff7-285f-454c-9d79-3fa68968382b" width="200" style="border-radius:15px;"/>
 
 ---
 
