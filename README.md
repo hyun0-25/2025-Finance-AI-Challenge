@@ -29,7 +29,7 @@
 
 ## 아키텍처
 
-AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)** 로 구성된 마이크로서비스 아키텍처를 따릅니다.
+AI 캘린더 서비스는 **3개의 주요 모듈(Frontend, Backend, AI Server)** 로 아키텍처가 구성되어 있습니다.
 
 - **Frontend**: 사용자 인터페이스 담당 (React, TypeScript, Vite)
 - **Backend**: 핵심 비즈니스 로직 처리 (Spring Boot)
